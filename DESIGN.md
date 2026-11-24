@@ -70,7 +70,7 @@ Batch processing and reusable workflows that chain multiple tools are long-term 
 - Compress PDF
 - Add page numbers
 
-The foundation milestone built the app shell, catalog, documentation, and backend health check. Merge PDF and Split PDF are now available; the other five first-release tools remain planned and unavailable.
+The foundation milestone built the app shell, catalog, documentation, and backend health check. Merge PDF, Split PDF, and Organize pages are now available; the other four first-release tools remain planned and unavailable.
 
 ### Later milestones
 - Document preparation: Crop PDF, Repair PDF, Scan to PDF.
@@ -91,6 +91,7 @@ Choose tool → select files → preview/options → process → download. Each 
 - Backend: Python and Flask in `backend/`.
 - Merge PDF uses `pypdf` to combine pages in upload order. It rejects password-protected, invalid, and unreadable files with useful errors.
 - Split PDF uses `pypdf` to create one PDF per entered range and Python's standard `zipfile` module to package them in range order. Neither feature uses an external document service or native binary dependency.
+- Organize pages uses `pypdf` to validate uploaded PDFs and write a new document in the submitted page order. The frontend uses Mozilla's [`pdfjs-dist`](https://www.npmjs.com/package/pdfjs-dist) to render numbered thumbnails locally in the browser; its worker is bundled with Vite. The backend validates the final page references and insertion position independently of the preview. The original PDFs are not modified.
 - Frontend and backend live in separate folders. No database or user accounts in the first release.
 - `frontend/src/app/` owns application composition and routing when needed. `frontend/src/features/tool-catalog/` owns the catalog. Future PDF tools each get their own folder under `frontend/src/features/` and `backend/app/features/`.
 - Each PDF tool owns its UI, API interaction, validation, and processing logic. Put code in `shared/` only when multiple features genuinely need it. Shared modules may hold common UI primitives, styles, and backend file utilities once they are needed.
@@ -99,7 +100,7 @@ Choose tool → select files → preview/options → process → download. Each 
 
 ## File privacy and temporary files
 
-- Temporary uploaded files have a 15-minute maximum retention threshold. Merge PDF and Split PDF each delete their private request directory immediately after processing or an error. Abandoned directories are cleaned at startup and during later requests once they reach 15 minutes. Both outputs are returned from memory and are not stored as server files.
+- Temporary uploaded files have a 15-minute maximum retention threshold. Merge PDF, Split PDF, and Organize pages each delete their private request directory immediately after processing or an error. Abandoned directories are cleaned at startup and during later requests once they reach 15 minutes. Outputs are returned from memory and are not stored as server files. Organize pages renders thumbnails locally before upload.
 - Use private, per-request temporary storage outside public web assets, with unpredictable names and strict file-size and type checks. Never trust a client-supplied path or filename for storage.
 - Delete temporary inputs and outputs after completion, failure, cancellation, and expiration. Account for interrupted requests and process restarts with a cleanup mechanism.
 - Do not log document contents, passwords, or sensitive filenames. Use HTTPS in deployment and return only the files the request produced.
@@ -123,5 +124,6 @@ Choose tool → select files → preview/options → process → download. Each 
 
 ## Change log
 
+- 2026-11-25: Implemented Organize pages with local PDF.js thumbnails and backend `pypdf` processing. Kept the first-release scope, frameworks, and 15-minute temporary-file policy unchanged.
 - 2026-11-25: Combined the Merge PDF and Split PDF implementations. Merge PDF uses `pypdf`; Split PDF uses `pypdf` and standard-library ZIP creation. Both use a 15-minute temporary-file retention threshold. No scope or framework change.
 - 2026-11-24: Initial product plan, locked first-release scope, technology choices, and foundation milestone recorded.
