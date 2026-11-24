@@ -5,14 +5,15 @@ import { categories, tools, type CategoryId, type Tool } from './catalog'
 type Filter = 'all' | 'first' | CategoryId
 
 function ToolCard({ tool }: { tool: Tool }) {
+  const available = !!tool.available
   return (
-    <article className="tool-card" aria-label={`${tool.name}, ${tool.release ? 'first release, planned' : 'future release, planned'}`}>
+    <article className={`tool-card ${available ? 'tool-card--available' : ''}`} aria-label={`${tool.name}, ${available ? 'available' : tool.release ? 'first release, planned' : 'future release, planned'}`}>
       <span className={`tool-icon tool-icon--${tool.category}`}><Icon name={tool.icon} /></span>
       <div className="tool-card__content">
-        <div className="tool-card__heading"><h3>{tool.name}</h3><span className={`tool-badge ${tool.release ? 'tool-badge--first' : ''}`}>{tool.release ? 'First release' : 'Later'}</span></div>
+        <div className="tool-card__heading"><h3>{tool.name}</h3><span className={`tool-badge ${available ? 'tool-badge--live' : tool.release ? 'tool-badge--first' : ''}`}>{available ? 'Available' : tool.release ? 'First release' : 'Later'}</span></div>
         <p>{tool.description}</p>
       </div>
-      <span className="tool-card__availability">Planned · unavailable</span>
+      {available ? <a className="tool-card__link" href="#merge-pdf" aria-label="Open Merge PDF">Open Merge PDF <span aria-hidden="true">→</span></a> : <span className="tool-card__availability">Planned · unavailable</span>}
     </article>
   )
 }
@@ -35,8 +36,8 @@ export function ToolCatalog() {
   return (
     <section className="catalog-section" id="catalog" aria-labelledby="catalog-title">
       <div className="catalog-heading">
-        <div><span className="eyebrow">THE TOOL LIBRARY</span><h2 id="catalog-title">Find your next PDF tool<span className="accent-dot">.</span></h2><p>Explore what’s coming to PageKit. Every tool below is still in development.</p></div>
-        <span className="catalog-count">{tools.length} tools planned</span>
+        <div><span className="eyebrow">THE TOOL LIBRARY</span><h2 id="catalog-title">Find your next PDF tool<span className="accent-dot">.</span></h2><p>Merge PDF is ready to use. Explore the rest of the toolkit planned for PageKit.</p></div>
+        <span className="catalog-count">{tools.length} tools in the library</span>
       </div>
 
       <div className="catalog-controls">
@@ -48,7 +49,7 @@ export function ToolCatalog() {
         </div>
       </div>
 
-      <p className="result-count" role="status">Showing {resultCount} planned {resultCount === 1 ? 'tool' : 'tools'}</p>
+      <p className="result-count" role="status">Showing {resultCount} {resultCount === 1 ? 'tool' : 'tools'}</p>
       {visibleGroups.length ? visibleGroups.map(group => <div className="tool-group" key={group.id}>
         <div className="tool-group__heading"><div><span className={`group-mark group-mark--${group.id}`} aria-hidden="true" /><h3>{group.label}</h3><span className="group-count">{group.tools.length}</span></div><p>{group.description}</p></div>
         <div className="tool-grid">{group.tools.map(tool => <ToolCard tool={tool} key={tool.name} />)}</div>
