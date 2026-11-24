@@ -1,5 +1,7 @@
 """PDF to Word HTTP endpoint."""
 
+from datetime import datetime, timezone
+
 from flask import Blueprint, jsonify, request, send_file
 
 from .conversion import convert_pdf
@@ -19,11 +21,13 @@ def pdf_to_word():
             source = directory / "input.pdf"
             save_validated_pdf(files[0], source)
             result = convert_pdf(source)
-        return send_file(
+        response = send_file(
             result,
             mimetype="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             as_attachment=True,
-            download_name="PageKit-converted.docx",
+            download_name=f"PageKit-converted-{datetime.now(timezone.utc):%Y%m%dT%H%M%S%fZ}.docx",
         )
+        response.headers["Cache-Control"] = "no-store"
+        return response
     except WordConversionError as exc:
         return jsonify(error=str(exc)), 400
