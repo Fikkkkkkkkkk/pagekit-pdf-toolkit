@@ -70,7 +70,7 @@ Batch processing and reusable workflows that chain multiple tools are long-term 
 - Compress PDF
 - Add page numbers
 
-The foundation milestone built the app shell, catalog, documentation, and backend health check. Split PDF is now available; the other six first-release tools remain planned and unavailable in this checkout.
+The foundation milestone built the app shell, catalog, documentation, and backend health check. Merge PDF and Split PDF are now available; the other five first-release tools remain planned and unavailable.
 
 ### Later milestones
 - Document preparation: Crop PDF, Repair PDF, Scan to PDF.
@@ -89,7 +89,8 @@ Choose tool → select files → preview/options → process → download. Each 
 
 - Frontend: React, TypeScript, and Vite in `frontend/`.
 - Backend: Python and Flask in `backend/`.
-- Split PDF uses `pypdf` to read and create PDFs. It preserves the entered range order and packages one PDF per range using Python's standard `zipfile` module. No external document service is used.
+- Merge PDF uses `pypdf` to combine pages in upload order. It rejects password-protected, invalid, and unreadable files with useful errors.
+- Split PDF uses `pypdf` to create one PDF per entered range and Python's standard `zipfile` module to package them in range order. Neither feature uses an external document service or native binary dependency.
 - Frontend and backend live in separate folders. No database or user accounts in the first release.
 - `frontend/src/app/` owns application composition and routing when needed. `frontend/src/features/tool-catalog/` owns the catalog. Future PDF tools each get their own folder under `frontend/src/features/` and `backend/app/features/`.
 - Each PDF tool owns its UI, API interaction, validation, and processing logic. Put code in `shared/` only when multiple features genuinely need it. Shared modules may hold common UI primitives, styles, and backend file utilities once they are needed.
@@ -98,7 +99,7 @@ Choose tool → select files → preview/options → process → download. Each 
 
 ## File privacy and temporary files
 
-- Temporary uploaded files have a 15-minute maximum retention threshold. Split PDF deletes its private request directory immediately after processing or an error. Abandoned directories are cleaned at startup and during later requests once they reach 15 minutes. The ZIP is returned from memory, not stored as a server file.
+- Temporary uploaded files have a 15-minute maximum retention threshold. Merge PDF and Split PDF each delete their private request directory immediately after processing or an error. Abandoned directories are cleaned at startup and during later requests once they reach 15 minutes. Both outputs are returned from memory and are not stored as server files.
 - Use private, per-request temporary storage outside public web assets, with unpredictable names and strict file-size and type checks. Never trust a client-supplied path or filename for storage.
 - Delete temporary inputs and outputs after completion, failure, cancellation, and expiration. Account for interrupted requests and process restarts with a cleanup mechanism.
 - Do not log document contents, passwords, or sensitive filenames. Use HTTPS in deployment and return only the files the request produced.
@@ -122,5 +123,5 @@ Choose tool → select files → preview/options → process → download. Each 
 
 ## Change log
 
-- 2026-11-25: Implemented Split PDF in this checkout, using `pypdf` and standard-library ZIP creation. Set temporary-file retention to 15 minutes. The previously discussed Merge PDF implementation was not present in this checkout; first-release scope and frameworks remain unchanged.
+- 2026-11-25: Combined the Merge PDF and Split PDF implementations. Merge PDF uses `pypdf`; Split PDF uses `pypdf` and standard-library ZIP creation. Both use a 15-minute temporary-file retention threshold. No scope or framework change.
 - 2026-11-24: Initial product plan, locked first-release scope, technology choices, and foundation milestone recorded.
