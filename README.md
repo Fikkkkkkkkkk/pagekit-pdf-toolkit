@@ -1,6 +1,6 @@
 # PageKit
 
-PageKit is a student-focused PDF toolkit. Merge PDF, Split PDF, and Organize pages are available; the other catalog tools are planned and unavailable. Flask handles these features and provides a health check.
+PageKit is a student-focused PDF toolkit. Merge PDF, Split PDF, Organize pages, and PDF to Word are available; the other catalog tools are planned and unavailable. Flask handles these features and provides a health check.
 
 ## Requirements
 
@@ -58,8 +58,16 @@ Ranges must use positive page numbers, stay within the document, and not overlap
 
 The backend validates both PDFs, the page order, and the insertion position. Password-protected or unreadable PDFs are rejected. Original files remain unchanged. The frontend uses Mozilla's `pdfjs-dist` for local thumbnails; the backend uses `pypdf` for the resulting PDF. Temporary uploads are deleted after processing or failure, with abandoned directories cleaned at startup and on later requests once 15 minutes old.
 
+## Try PDF to Word
+
+1. Start both servers and open **PDF to Word** from the catalog.
+2. Choose one PDF, up to 25 MB, with selectable text.
+3. Choose **Convert to Word**, then **Download DOCX**.
+
+The converter includes all pages, produces editable extracted text, and tries to include embedded images and basic paragraph and page structure. Review the DOCX: columns, tables, fonts, and exact image positions can change. Likely scanned or image-only pages are rejected with an OCR-unavailable message instead of a blank Word file. The backend uses `pypdf`, `python-docx`, and Pillow locally. No document is sent to an external service. Uploaded files are removed after processing or failure; abandoned temporary folders are cleaned at startup and on later requests once 15 minutes old.
+
 ## Checks
 
 Run `npm run build` in `frontend/` to type-check and build the frontend. Backend tests can be run with `python -m unittest discover -s tests` after installing its requirements.
 
-See [DESIGN.md](DESIGN.md) for the locked first-release scope, full planned catalog, and delivery rules. No accounts, database, or environment variables are needed.
+See [DESIGN.md](DESIGN.md) for the agreed active-release scope, full planned catalog, and delivery rules. No accounts, database, or environment variables are needed.

@@ -61,7 +61,7 @@ Batch processing and reusable workflows that chain multiple tools are long-term 
 
 ## Milestones
 
-### First release: locked scope
+### Active release scope (agreed expansion of the original first-release scope)
 - Merge PDF
 - Split PDF
 - Organize pages
@@ -69,17 +69,18 @@ Batch processing and reusable workflows that chain multiple tools are long-term 
 - Images to PDF
 - Compress PDF
 - Add page numbers
+- PDF to Word
 
-The foundation milestone built the app shell, catalog, documentation, and backend health check. Merge PDF, Split PDF, and Organize pages are now available; the other four first-release tools remain planned and unavailable.
+The foundation milestone built the app shell, catalog, documentation, and backend health check. Merge PDF, Split PDF, Organize pages, and PDF to Word are now available; the other four active-release tools remain planned and unavailable. PDF to Word was moved into the active release at the user's request on 2026-11-25. The original seven-tool scope is otherwise unchanged.
 
 ### Later milestones
 - Document preparation: Crop PDF, Repair PDF, Scan to PDF.
-- Conversion: PDF to Word, PDF to PowerPoint, PDF to Excel, PDF to JPG and extract images, PDF to PDF/A, PDF to Markdown, Word to PDF, PowerPoint to PDF, Excel to PDF, HTML/webpage to PDF.
+- Conversion: PDF to PowerPoint, PDF to Excel, PDF to JPG and extract images, PDF to PDF/A, PDF to Markdown, Word to PDF, PowerPoint to PDF, Excel to PDF, HTML/webpage to PDF.
 - Editing and review: Edit PDF with text, images, shapes, and annotations; Add a text or image watermark; Create, fill, and edit PDF forms; Protect PDF with a password; Unlock PDF; Sign PDF; Redact PDF; Compare two PDFs.
 - Intelligence: OCR for scanned PDFs, AI PDF summarizer, Translate PDF.
 - Productivity: Batch processing and reusable workflows that chain multiple tools.
 
-The milestone ordering after the first release is provisional. Moving a tool into or out of the locked first-release scope requires an explicit agreed change recorded below.
+The milestone ordering after the active release is provisional. Moving another tool into or out of the active-release scope requires an explicit agreed change recorded below.
 
 ## Main user flow
 
@@ -92,6 +93,9 @@ Choose tool → select files → preview/options → process → download. Each 
 - Merge PDF uses `pypdf` to combine pages in upload order. It rejects password-protected, invalid, and unreadable files with useful errors.
 - Split PDF uses `pypdf` to create one PDF per entered range and Python's standard `zipfile` module to package them in range order. Neither feature uses an external document service or native binary dependency.
 - Organize pages uses `pypdf` to validate uploaded PDFs and write a new document in the submitted page order. The frontend uses Mozilla's [`pdfjs-dist`](https://www.npmjs.com/package/pdfjs-dist) to render numbered thumbnails locally in the browser; its worker is bundled with Vite. The backend validates the final page references and insertion position independently of the preview. The original PDFs are not modified.
+- PDF to Word uses the existing `pypdf` for text and image extraction, plus [`python-docx`](https://pypi.org/project/python-docx/) to write editable DOCX files and the `pypdf[image]` Pillow dependency to decode embedded images. `python-docx` 1.2 is MIT licensed and supports Python 3.9+; [Pillow 12.3](https://pypi.org/project/pillow/12.3.0/) is MIT-CMU licensed and supports Python 3.10+. Both were checked for this project's Python 3.10 runtime. This approach keeps conversion local and avoids a paid service.
+- Conversion aims for readable text, paragraph order, page breaks, basic page size, and embedded images. It does not preserve exact formatting, tables, columns, fonts, or image placement. Extracted images follow the text on their source page. PDF text extraction order can vary with the source document. A page with too little selectable text and images is treated as likely scanned/image-only, and conversion stops with an OCR-unavailable message. No OCR is performed.
+- [`pdf2docx`](https://github.com/ArtifexSoftware/pdf2docx/discussions/374) was considered but not selected: Artifex says it is no longer actively maintained. Its PyMuPDF dependency offers [AGPLv3 or commercial licensing](https://pymupdf.io/licensing), which would require a separate deployment decision. No exact layout preservation is promised.
 - Frontend and backend live in separate folders. No database or user accounts in the first release.
 - `frontend/src/app/` owns application composition and routing when needed. `frontend/src/features/tool-catalog/` owns the catalog. Future PDF tools each get their own folder under `frontend/src/features/` and `backend/app/features/`.
 - Each PDF tool owns its UI, API interaction, validation, and processing logic. Put code in `shared/` only when multiple features genuinely need it. Shared modules may hold common UI primitives, styles, and backend file utilities once they are needed.
@@ -100,7 +104,7 @@ Choose tool → select files → preview/options → process → download. Each 
 
 ## File privacy and temporary files
 
-- Temporary uploaded files have a 15-minute maximum retention threshold. Merge PDF, Split PDF, and Organize pages each delete their private request directory immediately after processing or an error. Abandoned directories are cleaned at startup and during later requests once they reach 15 minutes. Outputs are returned from memory and are not stored as server files. Organize pages renders thumbnails locally before upload.
+- Temporary uploaded files have a 15-minute maximum retention threshold. Merge PDF, Split PDF, Organize pages, and PDF to Word each delete their private request directory immediately after processing or an error. Abandoned directories are cleaned at startup and during later requests once they reach 15 minutes. Outputs are returned from memory and are not stored as server files. Organize pages renders thumbnails locally before upload.
 - Use private, per-request temporary storage outside public web assets, with unpredictable names and strict file-size and type checks. Never trust a client-supplied path or filename for storage.
 - Delete temporary inputs and outputs after completion, failure, cancellation, and expiration. Account for interrupted requests and process restarts with a cleanup mechanism.
 - Do not log document contents, passwords, or sensitive filenames. Use HTTPS in deployment and return only the files the request produced.
@@ -124,6 +128,7 @@ Choose tool → select files → preview/options → process → download. Each 
 
 ## Change log
 
+- 2026-11-25: At the user's request, added PDF to Word to the active release scope and implemented local conversion with `pypdf`, `python-docx`, and Pillow. Recorded the converter's layout limits and OCR boundary. Other scope and technology decisions remain unchanged.
 - 2026-11-25: Implemented Organize pages with local PDF.js thumbnails and backend `pypdf` processing. Kept the first-release scope, frameworks, and 15-minute temporary-file policy unchanged.
 - 2026-11-25: Combined the Merge PDF and Split PDF implementations. Merge PDF uses `pypdf`; Split PDF uses `pypdf` and standard-library ZIP creation. Both use a 15-minute temporary-file retention threshold. No scope or framework change.
 - 2026-11-24: Initial product plan, locked first-release scope, technology choices, and foundation milestone recorded.

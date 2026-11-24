@@ -19,6 +19,7 @@ function ToolCard({ tool }: { tool: Tool }) {
 }
 
 export function ToolCatalog() {
+  const activeReleaseCount = tools.filter(tool => tool.release).length
   const [filter, setFilter] = useState<Filter>('all')
   const [query, setQuery] = useState('')
   const normalizedQuery = query.trim().toLowerCase()
@@ -36,7 +37,7 @@ export function ToolCatalog() {
   return (
     <section className="catalog-section" id="catalog" aria-labelledby="catalog-title">
       <div className="catalog-heading">
-        <div><span className="eyebrow">THE TOOL LIBRARY</span><h2 id="catalog-title">Find your next PDF tool<span className="accent-dot">.</span></h2><p>Merge PDF, Split PDF, and Organize pages are ready to use. Explore the rest of the toolkit planned for PageKit.</p></div>
+        <div><span className="eyebrow">THE TOOL LIBRARY</span><h2 id="catalog-title">Find your next PDF tool<span className="accent-dot">.</span></h2><p>Merge PDF, Split PDF, Organize pages, and PDF to Word are ready to use. Explore the rest of the toolkit planned for PageKit.</p></div>
         <span className="catalog-count">{tools.length} tools in the library</span>
       </div>
 
@@ -44,7 +45,7 @@ export function ToolCatalog() {
         <label className="search-field"><Icon name="scan" /><span className="sr-only">Search planned tools</span><input value={query} onChange={event => setQuery(event.target.value)} type="search" placeholder="Search tools, like ‘merge’ or ‘image’" /></label>
         <div className="filter-list" role="group" aria-label="Filter tools">
           <button className={filter === 'all' ? 'filter-pill active' : 'filter-pill'} onClick={() => selectFilter('all')} aria-pressed={filter === 'all'}>All tools</button>
-          <button className={filter === 'first' ? 'filter-pill active' : 'filter-pill'} onClick={() => selectFilter('first')} aria-pressed={filter === 'first'}>First release <span>7</span></button>
+          <button className={filter === 'first' ? 'filter-pill active' : 'filter-pill'} onClick={() => selectFilter('first')} aria-pressed={filter === 'first'}>Active release <span>{activeReleaseCount}</span></button>
           {categories.map(category => <button key={category.id} className={filter === category.id ? 'filter-pill active' : 'filter-pill'} onClick={() => selectFilter(category.id)} aria-pressed={filter === category.id}>{category.label}</button>)}
         </div>
       </div>
