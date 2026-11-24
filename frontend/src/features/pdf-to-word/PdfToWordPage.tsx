@@ -45,10 +45,10 @@ export function PdfToWordPage() {
     setError('')
     setLoading(true)
     try {
-      const blob = await convertPdfToWord(file)
+      const { blob, name } = await convertPdfToWord(file)
       const url = URL.createObjectURL(blob)
       resultUrl.current = url
-      setResult({ url, name: 'PageKit-converted.docx', size: blob.size })
+      setResult({ url, name, size: blob.size })
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : 'The PDF could not be converted. Try again.')
     } finally {

@@ -64,7 +64,9 @@ The backend validates both PDFs, the page order, and the insertion position. Pas
 2. Choose one PDF, up to 25 MB, with selectable text.
 3. Choose **Convert to Word**, then **Download DOCX**.
 
-The converter includes all pages, produces editable extracted text, and tries to include embedded images and basic paragraph and page structure. Review the DOCX: columns, tables, fonts, and exact image positions can change. Likely scanned or image-only pages are rejected with an OCR-unavailable message instead of a blank Word file. The backend uses `pypdf`, `python-docx`, and Pillow locally. No document is sent to an external service. Uploaded files are removed after processing or failure; abandoned temporary folders are cleaned at startup and on later requests once 15 minutes old.
+Each conversion gets a uniquely named download. When comparing versions, open the newest file and restart the Flask server after changing backend code.
+
+The converter includes all pages and produces editable text. It uses PDF text positions and available font information to approximate alignment, bold, italic, underline, font size, line and paragraph spacing, and simple two-column sections as Word tables. A consistent repeated top-right reference is placed in the Word header while body text stays below it. It also tries to include embedded images and page breaks. When every source page has a consistent sequence of centered footer numbers, it places a Word page-number field in the footer so numbers do not flow as body paragraphs. Review the DOCX against the original: complex columns, tables, fonts, image positions, and pagination can still change. Likely scanned or image-only pages are rejected with an OCR-unavailable message instead of a blank Word file. The backend uses `pypdf`, `python-docx`, and Pillow locally. No document is sent to an external service. Uploaded files are removed after processing or failure; abandoned temporary folders are cleaned at startup and on later requests once 15 minutes old.
 
 ## Checks
 
