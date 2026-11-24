@@ -13,7 +13,7 @@ function ToolCard({ tool }: { tool: Tool }) {
         <div className="tool-card__heading"><h3>{tool.name}</h3><span className={`tool-badge ${available ? 'tool-badge--live' : tool.release ? 'tool-badge--first' : ''}`}>{available ? 'Available' : tool.release ? 'First release' : 'Later'}</span></div>
         <p>{tool.description}</p>
       </div>
-      {available ? <a className="tool-card__link" href="#merge-pdf" aria-label="Open Merge PDF">Open Merge PDF <span aria-hidden="true">→</span></a> : <span className="tool-card__availability">Planned · unavailable</span>}
+      {available ? <a className="tool-card__link" href={`#${tool.name.toLowerCase().replace(/ /g, '-')}`}>Open {tool.name} <span aria-hidden="true">→</span></a> : <span className="tool-card__availability">Planned · unavailable</span>}
     </article>
   )
 }
@@ -36,7 +36,7 @@ export function ToolCatalog() {
   return (
     <section className="catalog-section" id="catalog" aria-labelledby="catalog-title">
       <div className="catalog-heading">
-        <div><span className="eyebrow">THE TOOL LIBRARY</span><h2 id="catalog-title">Find your next PDF tool<span className="accent-dot">.</span></h2><p>Merge PDF is ready to use. Explore the rest of the toolkit planned for PageKit.</p></div>
+        <div><span className="eyebrow">THE TOOL LIBRARY</span><h2 id="catalog-title">Find your next PDF tool<span className="accent-dot">.</span></h2><p>Merge PDF and Split PDF are ready to use. Explore the rest of the toolkit planned for PageKit.</p></div>
         <span className="catalog-count">{tools.length} tools in the library</span>
       </div>
 

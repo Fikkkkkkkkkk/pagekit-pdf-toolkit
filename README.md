@@ -1,6 +1,6 @@
 # PageKit
 
-PageKit is a student-focused PDF toolkit. Merge PDF is available; the other catalog tools are visibly planned and unavailable. The Flask service handles Merge PDF and provides a health check.
+PageKit is a student-focused PDF toolkit. Merge PDF and Split PDF are available; the other catalog tools are planned and unavailable. Flask handles both features and provides a health check.
 
 ## Requirements
 
@@ -37,7 +37,16 @@ The health check is at `http://127.0.0.1:5000/api/health` and returns `{"status"
 3. Select at least two PDFs. Use the up/down buttons to set their order, or remove a file.
 4. Choose **Merge PDFs**, then **Download merged PDF**. The output follows the order shown on the page.
 
-Merge PDF accepts 2–20 PDFs, up to 25 MB per file and 100 MB total. It rejects empty, unreadable, and password-protected PDFs. The backend uses `pypdf`. Uploaded files are kept in a private request folder and removed after processing or an error; abandoned folders are cleaned at startup and on later requests after 15 minutes. The result is returned directly and is not stored on the server.
+Merge PDF accepts 2–20 PDFs, up to 25 MB per file and 100 MB total. It rejects empty, unreadable, and password-protected PDFs.
+
+## Try Split PDF
+
+1. Start both servers and open the frontend URL.
+2. Open **Split PDF** from its catalog card and choose one PDF, up to 25 MB.
+3. Enter comma-separated page ranges, such as `1-3, 5, 8-10`.
+4. Choose **Split PDF**, then **Download ZIP**. Each range becomes a separate PDF, in the entered order.
+
+Ranges must use positive page numbers, stay within the document, and not overlap. Password-protected or unreadable PDFs are rejected. The original PDF is unchanged. Both tools use `pypdf`; Split PDF also uses Python's `zipfile`. Uploads are kept in private request folders and removed after processing or an error; abandoned folders are cleaned at startup and on later requests once 15 minutes old. Results are returned directly and are not stored on the server.
 
 ## Checks
 

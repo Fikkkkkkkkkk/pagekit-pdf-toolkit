@@ -20,7 +20,7 @@ export const categories: { id: CategoryId; label: string; description: string }[
 
 export const tools: Tool[] = [
   { name: 'Merge PDF', description: 'Bring readings or handouts into one file.', category: 'organize', release: true, available: true, icon: 'merge' },
-  { name: 'Split PDF', description: 'Keep only the sections you need.', category: 'organize', release: true, icon: 'split' },
+  { name: 'Split PDF', description: 'Keep only the sections you need.', category: 'organize', release: true, available: true, icon: 'split' },
   { name: 'Organize pages', description: 'Reorder, add, or remove pages.', category: 'organize', release: true, icon: 'pages' },
   { name: 'Rotate PDF', description: 'Turn sideways pages the right way up.', category: 'organize', release: true, icon: 'rotate' },
   { name: 'Add page numbers', description: 'Make notes and citations easier to follow.', category: 'organize', release: true, icon: 'numbers' },
