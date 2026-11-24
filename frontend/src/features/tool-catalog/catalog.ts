@@ -28,7 +28,7 @@ export const tools: Tool[] = [
   { name: 'Repair PDF', description: 'Try to recover a damaged document.', category: 'organize', icon: 'repair' },
   { name: 'Scan to PDF', description: 'Turn a scan into a shareable PDF.', category: 'organize', icon: 'scan' },
   { name: 'Compress PDF', description: 'Shrink a file for easier submission.', category: 'optimize', release: true, icon: 'compress' },
-  { name: 'PDF to Word', description: 'Create an editable Word document.', category: 'convert', icon: 'word' },
+  { name: 'PDF to Word', description: 'Create an editable Word document.', category: 'convert', release: true, available: true, icon: 'word' },
   { name: 'PDF to PowerPoint', description: 'Move PDF content into slides.', category: 'convert', icon: 'slides' },
   { name: 'PDF to Excel', description: 'Bring tables into a spreadsheet.', category: 'convert', icon: 'sheet' },
   { name: 'PDF to JPG & images', description: 'Save pages as JPGs or extract images.', category: 'convert', icon: 'image' },
