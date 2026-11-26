@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent, type PointerEvent } from 'react'
 import { Icon } from '../../shared/components/Icon'
+import { PdfProgress } from '../../shared/components/PdfProgress'
+import { usePdfProgress } from '../../shared/components/usePdfProgress'
 import { cropPdf } from './api'
 import { renderPreview } from './preview'
 import type { CropArea, CroppedResult, PagePreview } from './types'
@@ -27,6 +29,7 @@ export function CropPdfPage() {
   const [error, setError] = useState('')
   const [result, setResult] = useState<CroppedResult | null>(null)
   const resultUrl = useRef<string | null>(null)
+  const progress = usePdfProgress()
   const drag = useRef<{ x: number; y: number; previous: CropArea } | null>(null)
 
   useEffect(() => () => { if (resultUrl.current) URL.revokeObjectURL(resultUrl.current) }, [])
@@ -35,6 +38,7 @@ export function CropPdfPage() {
     if (resultUrl.current) URL.revokeObjectURL(resultUrl.current)
     resultUrl.current = null
     setResult(null)
+    progress.reset()
   }
 
   async function chooseFile(event: ChangeEvent<HTMLInputElement>) {
@@ -140,7 +144,7 @@ export function CropPdfPage() {
     setError('')
     setNotice('')
     try {
-      const blob = await cropPdf(file, crop)
+      const blob = await progress.run((callbacks, signal) => cropPdf(file, crop, callbacks, signal))
       const url = URL.createObjectURL(blob)
       resultUrl.current = url
       setResult({ url, name: 'PageKit-cropped.pdf', size: blob.size })
@@ -170,7 +174,8 @@ export function CropPdfPage() {
         <fieldset className="crop-percentages"><legend>Fine-tune crop area (percent of visible page)</legend><label>Left edge<input type="number" min="0" max="99" step="1" value={Math.round(crop.left * 100)} onChange={event => setPercent('left', event.target.value)} disabled={busy} />%</label><label>Top edge<input type="number" min="0" max="99" step="1" value={Math.round(crop.top * 100)} onChange={event => setPercent('top', event.target.value)} disabled={busy} />%</label><label>Width<input type="number" min="1" max="100" step="1" value={Math.round(width * 100)} onChange={event => setPercent('width', event.target.value)} disabled={busy} />%</label><label>Height<input type="number" min="1" max="100" step="1" value={Math.round(height * 100)} onChange={event => setPercent('height', event.target.value)} disabled={busy} />%</label></fieldset>
       </div>}
 
-      {busy && <p className="crop-status" role="status">{busyMessage}</p>}
+      {busy && progress.state.stage === 'idle' && <p className="crop-status" role="status">{busyMessage}</p>}
+      <PdfProgress state={progress.state} onCancel={progress.cancel} />
       {notice && !busy && <p className="crop-status" role="status">{notice}</p>}
       {error && <div className="crop-error" role="alert"><strong>Couldn’t crop this PDF</strong><p>{error}</p></div>}
       {file && preview && <div className="crop-action-panel"><div><strong>Ready to crop your PDF?</strong><p>Cropping hides content outside the selected area. It does not securely erase that content from the PDF.</p></div><button type="submit" disabled={busy}>{busy ? 'Creating PDF…' : 'Create cropped PDF'}</button></div>}

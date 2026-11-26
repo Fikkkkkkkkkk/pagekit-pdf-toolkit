@@ -2,8 +2,12 @@
 
 from flask import Flask, jsonify, request
 
+from .shared.progress import ProgressCancelled, progress_blueprint
+
 from .features.add_page_numbers.routes import add_page_numbers_blueprint
 from .features.add_page_numbers.storage import cleanup_stale_requests as cleanup_stale_number_requests
+from .features.compress_pdf.routes import compress_pdf_blueprint
+from .features.compress_pdf.storage import cleanup_stale_requests as cleanup_stale_compress_requests
 from .features.crop_pdf.routes import crop_pdf_blueprint
 from .features.crop_pdf.storage import cleanup_stale_requests as cleanup_stale_crop_requests
 from .features.merge_pdf.routes import merge_pdf_blueprint
@@ -22,6 +26,7 @@ def create_app() -> Flask:
     app = Flask(__name__)
     app.config["MAX_CONTENT_LENGTH"] = 101 * 1024 * 1024
     cleanup_stale_number_requests()
+    cleanup_stale_compress_requests()
     cleanup_stale_crop_requests()
     cleanup_stale_merge_requests()
     cleanup_stale_organize_requests()
@@ -29,16 +34,23 @@ def create_app() -> Flask:
     cleanup_stale_rotate_requests()
     cleanup_stale_split_requests()
     app.register_blueprint(add_page_numbers_blueprint)
+    app.register_blueprint(compress_pdf_blueprint)
     app.register_blueprint(crop_pdf_blueprint)
     app.register_blueprint(merge_pdf_blueprint)
     app.register_blueprint(organize_pages_blueprint)
     app.register_blueprint(pdf_to_word_blueprint)
     app.register_blueprint(rotate_pdf_blueprint)
     app.register_blueprint(split_pdf_blueprint)
+    app.register_blueprint(progress_blueprint)
+
+    @app.errorhandler(ProgressCancelled)
+    def progress_cancelled(_error):
+        return jsonify(error="Processing was cancelled or its progress expired. Try again."), 409
 
     @app.before_request
     def remove_stale_pdf_files():
         cleanup_stale_number_requests()
+        cleanup_stale_compress_requests()
         cleanup_stale_crop_requests()
         cleanup_stale_merge_requests()
         cleanup_stale_organize_requests()
@@ -52,6 +64,8 @@ def create_app() -> Flask:
 
     @app.errorhandler(413)
     def request_too_large(_error):
+        if request.path == "/api/compress-pdf" or request.path.startswith("/api/compress-pdf/jobs/"):
+            return jsonify(error="The PDF is too large. Choose a file up to 25 MB."), 413
         if request.path == "/api/crop-pdf":
             return jsonify(error="The PDF is too large. Choose a file up to 25 MB."), 413
         if request.path == "/api/add-page-numbers":

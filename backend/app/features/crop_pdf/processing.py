@@ -7,6 +7,8 @@ from pypdf import PdfReader, PdfWriter
 from pypdf.errors import PdfReadError
 from pypdf.generic import RectangleObject
 
+from ...shared.progress import ProgressReporter
+
 from .validation import CropValidationError, validate_crop
 
 PDF_ERRORS = (PdfReadError, OSError, ValueError, TypeError, KeyError, IndexError)
@@ -33,7 +35,7 @@ def _crop_page(page, area: tuple[float, float, float, float]) -> None:
     page.cropbox = RectangleObject(bounds)
 
 
-def crop_document(path: Path, raw_crop: str) -> BytesIO:
+def crop_document(path: Path, raw_crop: str, progress: ProgressReporter | None = None) -> BytesIO:
     area = validate_crop(raw_crop)
     try:
         reader = PdfReader(path, strict=False)
@@ -48,11 +50,21 @@ def crop_document(path: Path, raw_crop: str) -> BytesIO:
 
     writer = PdfWriter()
     output = BytesIO()
+    if progress:
+        progress.start(len(reader.pages) + 1, "Cropping pages")
     try:
         for source in reader.pages:
+            if progress:
+                progress.check()
             page = writer.add_page(source)
             _crop_page(page, area)
+            if progress:
+                progress.advance("Cropping pages")
+        if progress:
+            progress.set_phase("Writing cropped PDF")
         writer.write(output)
+        if progress:
+            progress.advance("Writing cropped PDF")
     except CropValidationError:
         raise
     except PDF_ERRORS as exc:

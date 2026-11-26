@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Icon } from '../../shared/components/Icon'
+import { PdfProgress } from '../../shared/components/PdfProgress'
+import { usePdfProgress } from '../../shared/components/usePdfProgress'
 import { rotatePdf } from './api'
 import { renderThumbnails } from './thumbnails'
 import type { RotatePage, RotateResult } from './types'
@@ -18,6 +20,7 @@ export function RotatePdfPage() {
   const [error, setError] = useState('')
   const [result, setResult] = useState<RotateResult | null>(null)
   const resultUrl = useRef<string | null>(null)
+  const progress = usePdfProgress()
 
   useEffect(() => () => { if (resultUrl.current) URL.revokeObjectURL(resultUrl.current) }, [])
 
@@ -25,6 +28,7 @@ export function RotatePdfPage() {
     if (resultUrl.current) URL.revokeObjectURL(resultUrl.current)
     resultUrl.current = null
     setResult(null)
+    progress.reset()
   }
 
   async function chooseFile(event: ChangeEvent<HTMLInputElement>) {
@@ -67,6 +71,7 @@ export function RotatePdfPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (busy) return
     if (!file || !pages.length) { setError('Choose one PDF to rotate.'); return }
     clearResult()
     setBusy(true)
@@ -74,7 +79,7 @@ export function RotatePdfPage() {
     setError('')
     setNotice('')
     try {
-      const blob = await rotatePdf(file, pages)
+      const blob = await progress.run((callbacks, signal) => rotatePdf(file, pages, callbacks, signal))
       const url = URL.createObjectURL(blob)
       resultUrl.current = url
       setResult({ url, name: 'PageKit-rotated.pdf', size: blob.size })
@@ -103,7 +108,8 @@ export function RotatePdfPage() {
         <ol className="rotate-grid">{pages.map(page => <li className="rotate-card" key={page.number}><div className="rotate-card__preview"><span className="rotate-card__number">{page.number}</span><img src={page.thumbnail} alt={`Preview of PDF page ${page.number}, rotated ${page.rotation} degrees clockwise`} style={{ transform: `rotate(${page.rotation}deg)` }} /></div><div className="rotate-card__info"><strong>Page {page.number}</strong><span>{page.rotation === 0 ? 'Original orientation' : `${page.rotation}° clockwise`}</span></div><div className="rotate-card__actions"><button type="button" disabled={busy} onClick={() => turnPage(page.number, -1)} aria-label={`Rotate page ${page.number} counterclockwise 90 degrees`}>↶ Left</button><button type="button" disabled={busy} onClick={() => turnPage(page.number, 1)} aria-label={`Rotate page ${page.number} clockwise 90 degrees`}>↷ Right</button></div></li>)}</ol>
       </div>}
 
-      {busy && <p className="rotate-status" role="status">{busyMessage}</p>}
+      {busy && progress.state.stage === 'idle' && <p className="rotate-status" role="status">{busyMessage}</p>}
+      <PdfProgress state={progress.state} onCancel={progress.cancel} />
       {notice && !busy && <p className="rotate-status" role="status">{notice}</p>}
       {error && <div className="rotate-error" role="alert"><strong>Couldn’t rotate this PDF</strong><p>{error}</p></div>}
       {file && <div className="rotate-action-panel"><div><strong>Ready to make your PDF?</strong><p>Your original file stays unchanged. Pages without a selected turn keep their orientation.</p></div><button type="submit" disabled={busy || changedCount === 0}>{busy ? 'Creating PDF…' : 'Create rotated PDF'}</button></div>}

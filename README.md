@@ -1,6 +1,6 @@
 # PageKit
 
-PageKit is a student-focused PDF toolkit. Merge PDF, Split PDF, Organize pages, Rotate PDF, Add page numbers, Crop PDF, and PDF to Word are available; the other catalog tools are planned and unavailable. Flask handles these features and provides a health check.
+PageKit is a student-focused PDF toolkit. Merge PDF, Split PDF, Organize pages, Rotate PDF, Add page numbers, Crop PDF, Compress PDF, and PDF to Word are available; the other catalog tools are planned and unavailable. Flask handles these features and provides a health check.
 
 ## Requirements
 
@@ -84,6 +84,17 @@ Each following page receives the next number. The original PDF, its page order, 
 4. Choose **Create cropped PDF**, then **Download cropped PDF**.
 
 The same relative crop is applied to every page, including pages with different dimensions. Page order and underlying content are preserved. **Cropping hides content outside the selected area; it does not securely erase or redact it.** Check the downloaded PDF before sharing. The frontend renders previews locally with `pdfjs-dist`; the Flask backend uses `pypdf`. Password-protected, unreadable, and oversized PDFs are rejected. Uploads are removed after processing or failure, and abandoned request folders are cleaned at startup and on later requests once 15 minutes old.
+
+## Try Compress PDF
+
+1. Start both servers and open **Compress PDF** from the catalog.
+2. Choose one PDF, up to 25 MB. PageKit shows its original size, page count, and a source-page preview.
+3. Choose **Gentle** for lossless stream compression, **Balanced** for JPEG quality 75 and a 185 dpi target at displayed size, or **Strong** for JPEG quality 55 and a 120 dpi target. Stronger levels can soften fine image detail.
+4. Choose **Compress PDF**. Upload progress shows bytes sent; compression progress shows completed page and image work units. You can cancel while processing. Once the output is ready, compare the original size, output size, and percentage saved, then download the PDF copy. The page preview shows the source PDF; inspect the downloaded copy for image quality.
+
+Text and vector content stay as PDF content, and page order is preserved. Balanced and Strong recompress eligible RGB or grayscale images only when the new encoded image is smaller. Downsampling depends on each image's largest displayed size. Transparent, masked, unsupported, inline, and images with unknown placement remain unchanged. The backend clones the source document before compression; tests verify bookmarks, URL link annotations, a basic form field, metadata, and page labels. Complex interactive behavior and digital signatures are not guaranteed; rewriting a signed PDF can invalidate its signature. An already optimized PDF may save very little or become larger, which the result panel reports plainly. Processing uses the existing `pypdf` and Pillow libraries locally. Password-protected, unreadable, and oversized PDFs are rejected. The request directory is removed after processing or failure. Progress records are cleared after success, error, or cancellation, or expire after 15 minutes on a later request.
+
+All eight available PDF tools show real upload progress from bytes sent and processing progress from completed work units. Cancel stops the client request and signals the backend to stop at its next processing boundary. Processing percentages reflect completed units, not elapsed time, and reach 100% only when the output response is ready. Progress records are held in this Flask process, so a multiworker deployment would need worker affinity or a shared progress store.
 
 ## Try PDF to Word
 

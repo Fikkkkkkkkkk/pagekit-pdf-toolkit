@@ -4,6 +4,8 @@ from datetime import datetime, timezone
 
 from flask import Blueprint, jsonify, request, send_file
 
+from ...shared.progress import progress_for_request
+
 from .conversion import convert_pdf
 from .storage import request_directory
 from .validation import WordConversionError, save_validated_pdf
@@ -13,6 +15,7 @@ pdf_to_word_blueprint = Blueprint("pdf_to_word", __name__)
 
 @pdf_to_word_blueprint.post("/api/pdf-to-word")
 def pdf_to_word():
+    progress = progress_for_request()
     files = request.files.getlist("file")
     if len(files) != 1:
         return jsonify(error="Choose exactly one PDF to convert to Word."), 400
@@ -20,7 +23,7 @@ def pdf_to_word():
         with request_directory() as directory:
             source = directory / "input.pdf"
             save_validated_pdf(files[0], source)
-            result = convert_pdf(source)
+            result = convert_pdf(source, progress)
         response = send_file(
             result,
             mimetype="application/vnd.openxmlformats-officedocument.wordprocessingml.document",

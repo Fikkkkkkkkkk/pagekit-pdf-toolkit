@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type ChangeEvent, type DragEvent, type FormEvent } from 'react'
 import { Icon } from '../../shared/components/Icon'
+import { PdfProgress } from '../../shared/components/PdfProgress'
+import { usePdfProgress } from '../../shared/components/usePdfProgress'
 import { organizePages } from './api'
 import { PageThumbnail } from './PageThumbnail'
 import { renderThumbnails } from './thumbnails'
@@ -23,6 +25,7 @@ export function OrganizePagesPage() {
   const [result, setResult] = useState<OrganizedResult | null>(null)
   const resultUrl = useRef<string | null>(null)
   const draggedId = useRef<string | null>(null)
+  const progress = usePdfProgress()
 
   useEffect(() => () => { if (resultUrl.current) URL.revokeObjectURL(resultUrl.current) }, [])
 
@@ -30,6 +33,7 @@ export function OrganizePagesPage() {
     if (resultUrl.current) URL.revokeObjectURL(resultUrl.current)
     resultUrl.current = null
     setResult(null)
+    progress.reset()
   }
 
   async function chooseOriginal(event: ChangeEvent<HTMLInputElement>) {
@@ -145,6 +149,7 @@ export function OrganizePagesPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (busy) return
     if (!original) { setError('Choose one PDF to organize.'); return }
     if (!pages.length) { setError('At least one page must remain.'); return }
     clearResult()
@@ -153,7 +158,7 @@ export function OrganizePagesPage() {
     setError('')
     setNotice('')
     try {
-      const blob = await organizePages(original, added, pages, usedInsertion)
+      const blob = await progress.run((callbacks, signal) => organizePages(original, added, pages, usedInsertion, callbacks, signal))
       const url = URL.createObjectURL(blob)
       resultUrl.current = url
       setResult({ url, name: 'PageKit-organized.pdf', size: blob.size })
@@ -183,7 +188,8 @@ export function OrganizePagesPage() {
         <ol className="organize-grid">{pages.map((item, index) => <PageThumbnail key={item.id} item={item} position={index + 1} total={pages.length} busy={busy} onMove={movePage} onDelete={deletePage} onDragStart={onDragStart} onDragOver={event => event.preventDefault()} onDrop={onDrop} />)}</ol>
       </div></>}
 
-      {busy && <p className="organize-status" role="status">{busyMessage}</p>}
+      {busy && progress.state.stage === 'idle' && <p className="organize-status" role="status">{busyMessage}</p>}
+      <PdfProgress state={progress.state} onCancel={progress.cancel} />
       {notice && !busy && <p className="organize-status" role="status">{notice}</p>}
       {error && <div className="organize-message organize-message--error" role="alert"><strong>Couldn’t organize these pages</strong><p>{error}</p></div>}
       {original && <div className="organize-action-panel"><div><strong>Ready to make your PDF?</strong><p>The original files stay unchanged. Your chosen order becomes a new document.</p></div><button type="submit" disabled={busy || !pages.length}>{busy ? 'Creating PDF…' : 'Create organized PDF'}</button></div>}

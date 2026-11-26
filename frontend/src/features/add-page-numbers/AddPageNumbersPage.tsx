@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Icon } from '../../shared/components/Icon'
+import { PdfProgress } from '../../shared/components/PdfProgress'
+import { usePdfProgress } from '../../shared/components/usePdfProgress'
 import { addPageNumbers } from './api'
 import { renderPreview } from './preview'
 import type { NumberedResult, NumberPosition, PdfPreview } from './types'
@@ -29,6 +31,7 @@ export function AddPageNumbersPage() {
   const [error, setError] = useState('')
   const [result, setResult] = useState<NumberedResult | null>(null)
   const resultUrl = useRef<string | null>(null)
+  const progress = usePdfProgress()
 
   useEffect(() => () => { if (resultUrl.current) URL.revokeObjectURL(resultUrl.current) }, [])
 
@@ -36,6 +39,7 @@ export function AddPageNumbersPage() {
     if (resultUrl.current) URL.revokeObjectURL(resultUrl.current)
     resultUrl.current = null
     setResult(null)
+    progress.reset()
   }
 
   async function chooseFile(event: ChangeEvent<HTMLInputElement>) {
@@ -76,6 +80,7 @@ export function AddPageNumbersPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (busy) return
     if (!file || !preview) { setError('Choose one PDF to number.'); return }
     const firstNumber = Number(start)
     if (!/^[0-9]+$/.test(start) || !Number.isSafeInteger(firstNumber) || firstNumber < 1 || firstNumber + preview.pageCount - 1 > 999999) {
@@ -88,7 +93,7 @@ export function AddPageNumbersPage() {
     setError('')
     setNotice('')
     try {
-      const blob = await addPageNumbers(file, position, firstNumber)
+      const blob = await progress.run((callbacks, signal) => addPageNumbers(file, position, firstNumber, callbacks, signal))
       const url = URL.createObjectURL(blob)
       resultUrl.current = url
       setResult({ url, name: 'PageKit-numbered.pdf', size: blob.size })
@@ -114,7 +119,8 @@ export function AddPageNumbersPage() {
         <div className="number-preview"><div><strong>Placement preview</strong><p>First page shown. The number position is approximate; review the downloaded PDF for overlap with existing content.</p></div><div className="number-preview__sheet"><img src={preview.thumbnail} alt="Preview of the first PDF page" /><span className={`number-preview__marker number-preview__marker--${position}`} aria-label={`Page number ${start || '1'} at ${position.replace('-', ' ')}`}>{start || '1'}</span></div></div>
       </div>}
 
-      {busy && <p className="number-status" role="status">{busyMessage}</p>}
+      {busy && progress.state.stage === 'idle' && <p className="number-status" role="status">{busyMessage}</p>}
+      <PdfProgress state={progress.state} onCancel={progress.cancel} />
       {notice && !busy && <p className="number-status" role="status">{notice}</p>}
       {error && <div className="number-error" role="alert"><strong>Couldn’t add page numbers</strong><p>{error}</p></div>}
       {file && preview && <div className="number-action-panel"><div><strong>Ready to number your PDF?</strong><p>All source pages and their order stay unchanged. A new numbered copy will be created.</p></div><button type="submit" disabled={busy}>{busy ? 'Creating PDF…' : 'Create numbered PDF'}</button></div>}
