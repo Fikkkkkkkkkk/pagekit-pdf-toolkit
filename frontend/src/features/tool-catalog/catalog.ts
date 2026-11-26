@@ -40,7 +40,7 @@ export const tools: Tool[] = [
   { name: 'Images to PDF', description: 'Combine images into one document.', category: 'convert', release: true, icon: 'image' },
   { name: 'HTML/webpage to PDF', description: 'Save a web page as a PDF.', category: 'convert', icon: 'web' },
   { name: 'Edit PDF', description: 'Add text, images, shapes, and annotations.', category: 'edit', icon: 'edit' },
-  { name: 'Add watermark', description: 'Place a text or image mark on pages.', category: 'edit', icon: 'watermark' },
+  { name: 'Watermark PDF', description: 'Add customizable text to every page.', category: 'edit', release: true, available: true, icon: 'watermark' },
   { name: 'PDF forms', description: 'Create, fill, and edit PDF forms.', category: 'edit', icon: 'form' },
   { name: 'Protect PDF', description: 'Require a password to open a PDF copy.', category: 'security', release: true, available: true, icon: 'lock' },
   { name: 'Unlock PDF', description: 'Remove a password you know.', category: 'security', icon: 'unlock' },

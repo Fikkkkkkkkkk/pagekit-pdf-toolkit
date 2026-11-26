@@ -1,0 +1,80 @@
+.watermark-page{padding:45px 0 80px;background:#f8f9fd}
+.watermark-back{display:inline-block;margin-bottom:46px;color:#6d66da;font-size:13px;font-weight:800}
+.watermark-back:hover{text-decoration:underline}
+.watermark-intro{margin-bottom:34px}
+.watermark-intro h1{font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:50px;letter-spacing:-2.4px;margin:11px 0 9px}
+.watermark-intro p{font-size:16px;color:#788198;margin:0}
+.watermark-panel{background:#fff;border:1px solid #e8e9f2;border-radius:16px;padding:27px;margin:18px 0;box-shadow:0 5px 22px #29386009}
+.watermark-heading{display:flex;align-items:flex-start;gap:15px;margin-bottom:22px}
+.watermark-step{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:9px;background:#eceaff;color:#6a62df;font-size:12px;font-weight:800}
+.watermark-heading h2{font-size:18px;margin:1px 0 4px}
+.watermark-heading p{font-size:13px;line-height:1.5;color:#929aaa;margin:0}
+.watermark-picker{position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column;min-height:162px;border:2px dashed #cfcbf5;border-radius:14px;background:#fafaff;text-align:center;cursor:pointer}
+.watermark-picker:hover,.watermark-picker:focus-within{background:#f4f2ff;border-color:#7d74e9}
+.watermark-picker input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.watermark-picker input:disabled{cursor:wait}
+.watermark-picker__icon{display:grid;place-items:center;width:45px;height:45px;background:#eeebff;color:#7067e4;border-radius:12px;margin-bottom:11px}
+.watermark-picker strong{font-size:15px;color:#655cdd}
+.watermark-picker>span:last-child{font-size:12px;color:#9199ac;margin-top:8px}
+.watermark-file{font-size:13px;color:#8790a3;margin:14px 0 0;overflow-wrap:anywhere}
+.watermark-file strong{color:#414b67}
+
+.watermark-editor{display:grid;grid-template-columns:minmax(300px,360px) minmax(0,1fr);gap:28px;align-items:start}
+.watermark-controls{display:grid;gap:18px;min-width:0}
+.watermark-controls label,.watermark-controls legend{font-size:13px;font-weight:800;color:#414b67}
+.watermark-controls label span:not(.watermark-check span){font-weight:600;color:#747c97}
+.watermark-controls small{display:block;margin-top:7px;color:#8790a3;font-size:11px;font-weight:500;line-height:1.4}
+.watermark-text{display:block}
+.watermark-text input{display:block;width:100%;min-height:48px;margin-top:9px;padding:12px 14px;border:1px solid #cbd0e2;border-radius:10px;background:#fff;color:#24304d;font-size:15px;font-weight:500;box-shadow:0 2px 6px #29386008}
+.watermark-text input::placeholder{color:#a2a9ba}
+.watermark-text input:focus,.watermark-font-row input:focus,.watermark-font-row select:focus{border-color:#756de8;outline:3px solid #e6e3ff;outline-offset:1px}
+.watermark-font-row{display:grid;grid-template-columns:minmax(0,1fr) 105px;gap:12px}
+.watermark-font-row label{min-width:0}
+.watermark-font-row select,.watermark-font-row input{display:block;width:100%;height:42px;margin-top:8px;padding:8px 10px;border:1px solid #dfe2ec;border-radius:9px;background:#fff;color:#34405b;font-size:14px}
+.watermark-style{display:flex;gap:8px;margin-top:-6px}
+.watermark-style button{width:42px;height:40px;border:1px solid #dfe2ec;border-radius:9px;background:#fff;color:#414b67;font:700 16px Arial,sans-serif}
+.watermark-style button.selected,.watermark-position-grid button.selected{border-color:#756de8;background:#efedff;color:#514ac5}
+.watermark-style button:disabled,.watermark-position-grid button:disabled{cursor:not-allowed;opacity:.5}
+.watermark-position-field,.watermark-layer{border:0;padding:0;margin:0}
+.watermark-position-grid{display:grid;grid-template-columns:repeat(3,46px);gap:7px;margin-top:10px}
+.watermark-position-grid button{display:grid;place-items:center;width:46px;height:46px;border:1px solid #dfe2ec;border-radius:9px;background:#fff}
+.watermark-position-grid button span{width:11px;height:11px;border-radius:50%;background:#9da5bc}
+.watermark-position-grid button.selected span{background:#665de1}
+.watermark-check{display:flex;gap:11px;align-items:flex-start;padding:13px;border:1px solid #e4e5f1;border-radius:10px;background:#fafaff;cursor:pointer}
+.watermark-check input{flex:none;margin:3px 0 0;accent-color:#6861e8}
+.watermark-check strong{display:block;font-size:13px}
+.watermark-check small{margin-top:3px}
+.watermark-tuning{display:grid;grid-template-columns:minmax(0,1fr) 80px;gap:18px 14px}
+.watermark-tuning label{min-width:0}
+.watermark-tuning label:last-child{grid-column:1/-1}
+.watermark-tuning input[type=range]{display:block;width:100%;margin:12px 0 0;accent-color:#6861e8}
+.watermark-tuning input[type=color]{display:block;width:70px;height:40px;margin-top:8px;padding:2px;border:1px solid #dfe2ec;border-radius:8px;background:#fff}
+.watermark-layer>div{display:flex;gap:8px;margin-top:9px}
+.watermark-layer label{display:flex;align-items:center;gap:7px;min-height:40px;padding:8px 10px;border:1px solid #e3e5ee;border-radius:9px;font-size:12px;cursor:pointer}
+.watermark-layer input{accent-color:#6861e8}
+.watermark-layer p{font-size:11px;color:#8790a3;line-height:1.45;margin:8px 0 0}
+
+.watermark-preview{min-width:0;padding:16px;border:1px solid #ebeaf3;border-radius:12px;background:#fafaff}
+.watermark-preview__heading{display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap;margin-bottom:13px}
+.watermark-preview__heading strong{font-size:14px;color:#414b67}
+.watermark-preview__heading p{width:100%;font-size:11px;line-height:1.45;color:#8992a5;margin:0}
+.watermark-preview__heading label{font-size:12px;font-weight:700;color:#414b67}
+.watermark-preview__heading select{padding:5px;margin:0 4px;border:1px solid #cbd0e2;border-radius:6px;background:#fff}
+.watermark-preview__stage{display:flex;justify-content:center;align-items:center;width:100%;min-width:0;min-height:220px;padding:14px;border-radius:10px;background:#eef0f8}
+.watermark-preview__stage>p{font-size:13px;color:#68728c;text-align:center}
+.watermark-preview__page{position:relative;container-type:inline-size;flex:0 1 100%;width:100%;max-width:760px;min-width:0;overflow:hidden;line-height:0;background:#fff;box-shadow:0 5px 19px #27335124}
+.watermark-preview__page img{display:block;width:100%;height:auto}
+.watermark-preview__overlay{position:absolute;z-index:1;max-width:82%;white-space:nowrap;line-height:1.1;pointer-events:none;transform-origin:0 0}
+.watermark-preview__error{font-size:12px;color:#a5374a;margin:10px 0 0}
+.watermark-status{padding:11px 14px;background:#f0eeff;border-radius:9px;color:#655fd3;font-size:13px;margin:14px 0}
+.watermark-error{background:#fff0f1;color:#a5374a;border:1px solid #f5d4d9;border-radius:10px;padding:13px 15px;margin:16px 0}
+.watermark-error strong{font-size:13px}.watermark-error p{font-size:13px;line-height:1.5;margin:4px 0 0}
+.watermark-action{display:flex;align-items:center;justify-content:space-between;gap:20px;background:#292f49;color:#fff;border-radius:15px;padding:20px 23px;margin-top:19px}
+.watermark-action strong{font-size:17px}.watermark-action p{font-size:13px;color:#c6c9d9;margin:6px 0 0;line-height:1.5}
+.watermark-action button,.watermark-action a{flex:none;padding:13px 19px;border:0;border-radius:9px;background:#746def;color:#fff;font-size:13px;font-weight:800;text-align:center}
+.watermark-action button:hover:not(:disabled),.watermark-action a:hover{background:#8a83ff}
+.watermark-action button:disabled{opacity:.5;cursor:not-allowed}
+.watermark-privacy{font-size:12px;color:#9ba3b1;line-height:1.5;margin:17px 0 0}
+
+@media(max-width:900px){.watermark-editor{grid-template-columns:1fr}.watermark-preview{order:2}.watermark-controls{order:1}}
+@media(max-width:700px){.watermark-page{padding:28px 0 65px}.watermark-page .container{width:min(100% - 28px,1200px)}.watermark-back{margin-bottom:32px}.watermark-intro h1{font-size:40px}.watermark-intro p{font-size:15px;line-height:1.5}.watermark-panel{padding:18px}.watermark-editor{gap:20px}.watermark-preview{padding:10px}.watermark-preview__stage{padding:8px}.watermark-action{align-items:stretch;flex-direction:column}.watermark-action button,.watermark-action a{width:100%}}
