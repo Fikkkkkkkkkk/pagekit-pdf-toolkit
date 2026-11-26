@@ -1,6 +1,6 @@
 # PageKit
 
-PageKit is a student-focused PDF toolkit. Merge PDF, Split PDF, Organize pages, Rotate PDF, Add page numbers, Crop PDF, Compress PDF, PDF to Word, Protect PDF, Unlock PDF, Watermark PDF, and JPG to PDF are available; the other catalog tools are planned and unavailable. Flask handles these features and provides a health check.
+PageKit is a student-focused PDF toolkit. Merge PDF, Split PDF, Organize pages, Rotate PDF, Add page numbers, Crop PDF, Compress PDF, PDF to Word, PDF to JPG, Protect PDF, Unlock PDF, Watermark PDF, and JPG to PDF are available; the other catalog tools are planned and unavailable. Flask handles these features and provides a health check.
 
 ## Requirements
 
@@ -94,7 +94,7 @@ The same relative crop is applied to every page, including pages with different 
 
 Text and vector content stay as PDF content, and page order is preserved. Balanced and Strong recompress eligible RGB or grayscale images only when the new encoded image is smaller. Downsampling depends on each image's largest displayed size. Transparent, masked, unsupported, inline, and images with unknown placement remain unchanged. The backend clones the source document before compression; tests verify bookmarks, URL link annotations, a basic form field, metadata, and page labels. Complex interactive behavior and digital signatures are not guaranteed; rewriting a signed PDF can invalidate its signature. An already optimized PDF may save very little or become larger, which the result panel reports plainly. Processing uses the existing `pypdf` and Pillow libraries locally. Password-protected, unreadable, and oversized PDFs are rejected. The request directory is removed after processing or failure. Progress records are cleared after success, error, or cancellation, or expire after 15 minutes on a later request.
 
-All twelve available PDF tools show real upload progress from bytes sent and processing progress from completed work units. Cancel stops the client request and signals the backend to stop at its next processing boundary. Processing percentages reflect completed units, not elapsed time, and reach 100% only when the output response is ready. Progress records are held in this Flask process, so a multiworker deployment would need worker affinity or a shared progress store.
+All thirteen available PDF tools show progress from completed work units, and tools that upload to Flask show real upload progress from bytes sent. PDF to JPG additionally counts pages rendered in the browser. Cancel stops the client request and signals the backend to stop at its next processing boundary. Processing percentages reflect completed units, not elapsed time, and reach 100% only when the output response is ready. Progress records are held in this Flask process, so a multiworker deployment would need worker affinity or a shared progress store.
 
 ## Try Protect PDF
 
@@ -127,6 +127,15 @@ Watermark PDF uses the existing `pypdf` library locally to add text to every pag
 3. Choose A4, Letter, or **Fit to image**, then portrait or landscape. Choose **Create PDF** and download the result.
 
 Each selected image becomes one PDF page in the displayed order. A4 and Letter keep images upright inside white margins. Fit to image follows each image's shape at 96 pixels per inch, caps the longest page side at 2000 points, and rotates an image if needed to match the chosen orientation. Camera EXIF orientation is applied first; transparent PNG areas become white. Images are embedded as JPEG at quality 90, so review the downloaded PDF for any quality change. Processing uses the existing Pillow and `pypdf` dependencies locally; originals are unchanged. Invalid, unreadable, oversized, or unusually large images are rejected. Uploads are removed after processing or failure, and abandoned request folders are cleared at startup or on later requests once 15 minutes old.
+
+## Try PDF to JPG
+
+1. Start both servers and open **PDF to JPG** from the catalog.
+2. Choose one unlocked PDF, up to 25 MB, and review its page thumbnails.
+3. Choose **Compact**, **Balanced**, or **High** JPG quality. Select **Convert to JPG**, watch the completed-page progress, and download the ZIP when it is ready.
+4. Open the ZIP to check that it contains `page-001.jpg`, `page-002.jpg`, and so on in source-page order.
+
+PDF.js, already included in the frontend, renders the pages locally in your browser at up to 144 dpi and 2400 pixels per side. The original PDF stays in the browser and is unchanged. The converted JPGs are sent to the local Flask backend, validated with the existing Pillow dependency, and packaged with Python's standard `zipfile` module. No ZIP or PDF rendering dependency was added. Each generated JPG must fit within 25 MB and the group within 100 MB; choose a lower quality if the limit is exceeded. The feature exports rendered pages, not embedded images from within the PDF. Page conversion progress counts completed pages, while subsequent upload and ZIP progress reflect actual bytes and backend work. The backend keeps the JPGs and ZIP only for the request and does not save them as feature files.
 
 ## Try PDF to Word
 
