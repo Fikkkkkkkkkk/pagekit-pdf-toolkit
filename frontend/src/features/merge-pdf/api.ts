@@ -1,19 +1,10 @@
-import type { SelectedPdf } from './types'
+﻿import type { SelectedPdf } from './types'
+import type { PdfProgressCallbacks } from '../../shared/components/progressTypes'
+import { postPdfWithProgress } from '../../shared/components/postPdfWithProgress'
 
-export async function mergePdfs(files: SelectedPdf[]): Promise<Blob> {
+export async function mergePdfs(files: SelectedPdf[], progress: PdfProgressCallbacks, signal: AbortSignal): Promise<Blob> {
   const body = new FormData()
   files.forEach(item => body.append('files', item.file))
 
-  let response: Response
-  try {
-    response = await fetch('/api/merge-pdf', { method: 'POST', body })
-  } catch {
-    throw new Error('Could not connect to PageKit. Check that the Flask backend is running, then try again.')
-  }
-
-  if (!response.ok) {
-    const payload = await response.json().catch(() => null) as { error?: string } | null
-    throw new Error(payload?.error || 'The merge failed. Check your PDFs and try again.')
-  }
-  return response.blob()
+  return (await postPdfWithProgress('/api/merge-pdf', body, progress, signal)).blob
 }

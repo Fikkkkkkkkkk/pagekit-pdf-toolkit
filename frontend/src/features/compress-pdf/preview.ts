@@ -1,0 +1,36 @@
+import type { PdfPreview } from './types'
+
+const MAX_FILE_BYTES = 25 * 1024 * 1024
+
+export async function renderPreview(file: File): Promise<PdfPreview> {
+  if (!file.name.toLowerCase().endsWith('.pdf')) throw new Error('Choose a file with a .pdf extension.')
+  if (!file.size) throw new Error('This PDF is empty. Choose a readable file.')
+  if (file.size > MAX_FILE_BYTES) throw new Error('This PDF is over the 25 MB file limit.')
+
+  const { getDocument, GlobalWorkerOptions } = await import('pdfjs-dist')
+  GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString()
+  const loadingTask = getDocument({ data: await file.arrayBuffer() })
+  try {
+    const document = await loadingTask.promise
+    if (document.numPages < 1) throw new Error('This PDF has no pages to compress.')
+    const page = await document.getPage(1)
+    const unscaled = page.getViewport({ scale: 1 })
+    const viewport = page.getViewport({ scale: Math.min(220 / unscaled.width, 300 / unscaled.height) })
+    const canvas = window.document.createElement('canvas')
+    canvas.width = Math.ceil(viewport.width)
+    canvas.height = Math.ceil(viewport.height)
+    const context = canvas.getContext('2d')
+    if (!context) throw new Error('Page previews are unavailable in this browser.')
+    await page.render({ canvas, canvasContext: context, viewport }).promise
+    page.cleanup()
+    return { pageCount: document.numPages, thumbnail: canvas.toDataURL('image/png') }
+  } catch (caught) {
+    if (caught instanceof Error && caught.name === 'PasswordException') {
+      throw new Error('This PDF is password protected. Choose an unlocked PDF.')
+    }
+    if (caught instanceof Error && (caught.message.includes('previews') || caught.message.includes('no pages'))) throw caught
+    throw new Error('This PDF could not be previewed. Choose a readable PDF and try again.')
+  } finally {
+    await loadingTask.destroy()
+  }
+}

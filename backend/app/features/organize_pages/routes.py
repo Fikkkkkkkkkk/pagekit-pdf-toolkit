@@ -2,6 +2,8 @@
 
 from flask import Blueprint, jsonify, request, send_file
 
+from ...shared.progress import progress_for_request
+
 from .processing import organize_document
 from .storage import request_directory
 from .validation import OrganizeValidationError, save_validated_pdf
@@ -11,6 +13,7 @@ organize_pages_blueprint = Blueprint("organize_pages", __name__)
 
 @organize_pages_blueprint.post("/api/organize-pages")
 def organize_pages():
+    progress = progress_for_request()
     originals = request.files.getlist("original")
     additions = request.files.getlist("added")
     if len(originals) != 1 or len(additions) > 1:
@@ -27,6 +30,7 @@ def organize_pages():
                 added_path,
                 request.form.get("order", ""),
                 request.form.get("insertion_position"),
+                progress,
             )
         return send_file(result, mimetype="application/pdf", as_attachment=True, download_name="PageKit-organized.pdf")
     except OrganizeValidationError as exc:

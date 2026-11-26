@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Icon } from '../../shared/components/Icon'
+import { PdfProgress } from '../../shared/components/PdfProgress'
+import { usePdfProgress } from '../../shared/components/usePdfProgress'
 import { mergePdfs } from './api'
 import type { MergeResult, SelectedPdf } from './types'
 import './merge-pdf.css'
@@ -18,6 +20,7 @@ export function MergePdfPage() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<MergeResult | null>(null)
   const resultUrl = useRef<string | null>(null)
+  const progress = usePdfProgress()
 
   useEffect(() => () => { if (resultUrl.current) URL.revokeObjectURL(resultUrl.current) }, [])
 
@@ -25,6 +28,7 @@ export function MergePdfPage() {
     if (resultUrl.current) URL.revokeObjectURL(resultUrl.current)
     resultUrl.current = null
     setResult(null)
+    progress.reset()
   }
 
   function addFiles(event: ChangeEvent<HTMLInputElement>) {
@@ -63,12 +67,13 @@ export function MergePdfPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (loading) return
     if (files.length < 2) { setError('Choose at least two PDFs to merge.'); return }
     clearResult()
     setError('')
     setLoading(true)
     try {
-      const blob = await mergePdfs(files)
+      const blob = await progress.run((callbacks, signal) => mergePdfs(files, callbacks, signal))
       const url = URL.createObjectURL(blob)
       resultUrl.current = url
       setResult({ url, name: 'PageKit-merged.pdf', size: blob.size })
@@ -90,7 +95,7 @@ export function MergePdfPage() {
         {files.length ? <ol className="merge-file-list">{files.map((item, index) => <li key={item.id} className="merge-file"><span className="merge-file__number">{index + 1}</span><span className="merge-file__icon"><Icon name="pages" /></span><span className="merge-file__details"><strong title={item.file.name}>{item.file.name}</strong><small>{fileSize(item.file.size)}</small></span><div className="merge-file__actions"><button type="button" onClick={() => moveFile(index, -1)} disabled={loading || index === 0} aria-label={`Move ${item.file.name} up`}>↑</button><button type="button" onClick={() => moveFile(index, 1)} disabled={loading || index === files.length - 1} aria-label={`Move ${item.file.name} down`}>↓</button><button type="button" onClick={() => removeFile(item.id)} disabled={loading} aria-label={`Remove ${item.file.name}`}>×</button></div></li>)}</ol> : <div className="merge-empty"><Icon name="pages" /><p>Your PDFs will appear here so you can check their order.</p></div>}
         {error && <div className="merge-message merge-message--error" role="alert"><strong>Couldn’t merge these files</strong><p>{error}</p></div>}
         <button className="merge-submit" type="submit" disabled={loading || files.length < 2}>{loading ? 'Merging your PDFs…' : 'Merge PDFs'}</button>
-        {loading && <p className="merge-loading" role="status">Processing your files. This may take a moment.</p>}
+        <PdfProgress state={progress.state} onCancel={progress.cancel} />
         {result && <div className="merge-success" role="status"><span className="merge-success__icon">✓</span><div><h2>Your PDF is ready</h2><p>{result.name} · {fileSize(result.size)}</p></div><a href={result.url} download={result.name}>Download merged PDF</a></div>}
         <p className="merge-privacy">Your files are processed for this request and removed from temporary server storage after the merge.</p>
       </form>

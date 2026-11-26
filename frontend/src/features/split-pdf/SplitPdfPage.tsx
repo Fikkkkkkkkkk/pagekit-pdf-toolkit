@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Icon } from '../../shared/components/Icon'
+import { PdfProgress } from '../../shared/components/PdfProgress'
+import { usePdfProgress } from '../../shared/components/usePdfProgress'
 import { splitPdf } from './api'
 import type { SplitResult } from './types'
 import './split-pdf.css'
@@ -17,6 +19,7 @@ export function SplitPdfPage() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<SplitResult | null>(null)
   const resultUrl = useRef<string | null>(null)
+  const progress = usePdfProgress()
 
   useEffect(() => () => { if (resultUrl.current) URL.revokeObjectURL(resultUrl.current) }, [])
 
@@ -24,6 +27,7 @@ export function SplitPdfPage() {
     if (resultUrl.current) URL.revokeObjectURL(resultUrl.current)
     resultUrl.current = null
     setResult(null)
+    progress.reset()
   }
 
   function chooseFile(event: ChangeEvent<HTMLInputElement>) {
@@ -41,13 +45,14 @@ export function SplitPdfPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (loading) return
     if (!file) { setError('Choose one PDF file to split.'); return }
     if (!ranges.trim()) { setError('Enter at least one page range, such as 1-3, 5, 8-10.'); return }
     clearResult()
     setError('')
     setLoading(true)
     try {
-      const blob = await splitPdf(file, ranges)
+      const blob = await progress.run((callbacks, signal) => splitPdf(file, ranges, callbacks, signal))
       const url = URL.createObjectURL(blob)
       resultUrl.current = url
       setResult({ url, name: 'PageKit-split.zip', size: blob.size })
@@ -72,7 +77,7 @@ export function SplitPdfPage() {
         <p id="split-range-help" className="split-range-help">Use page numbers or inclusive ranges. Keep them in the order you want them in the ZIP. Ranges must not overlap.</p>
         {error && <div className="split-message split-message--error" role="alert"><strong>Couldn’t split this PDF</strong><p>{error}</p></div>}
         <button className="split-submit" type="submit" disabled={loading || !file || !ranges.trim()}>{loading ? 'Creating your PDFs…' : 'Split PDF'}</button>
-        {loading && <p className="split-loading" role="status">Preparing your ZIP. This may take a moment.</p>}
+        <PdfProgress state={progress.state} onCancel={progress.cancel} />
         {result && <div className="split-success" role="status"><span className="split-success__icon">✓</span><div><h2>Your ZIP is ready</h2><p>{result.name} · {fileSize(result.size)}</p></div><a href={result.url} download={result.name}>Download ZIP</a></div>}
         <p className="split-privacy">Your PDF is processed for this request and removed from temporary server storage after splitting.</p>
       </form>

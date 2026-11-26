@@ -6,6 +6,8 @@ from pathlib import Path
 from pypdf import PdfReader, PdfWriter
 from pypdf.errors import PdfReadError
 
+from ...shared.progress import ProgressReporter
+
 from .validation import OrganizeValidationError, PageSelection, validate_page_order
 
 PDF_ERRORS = (PdfReadError, OSError, ValueError, TypeError, KeyError, IndexError)
@@ -30,6 +32,7 @@ def organize_document(
     added_path: Path | None,
     raw_order: str,
     raw_insert_position: str | None,
+    progress: ProgressReporter | None = None,
 ) -> BytesIO:
     original = read_pdf(original_path, "The original PDF")
     added = read_pdf(added_path, "The second PDF") if added_path else None
@@ -38,12 +41,22 @@ def organize_document(
     )
     writer = PdfWriter()
     output = BytesIO()
+    if progress:
+        progress.start(len(order) + 1, "Organizing pages")
     try:
         for item in order:
+            if progress:
+                progress.check()
             reader = original if item["source"] == "original" else added
             assert reader is not None  # The order validator rejects missing added PDFs.
             writer.add_page(reader.pages[item["page"] - 1])
+            if progress:
+                progress.advance("Organizing pages")
+        if progress:
+            progress.set_phase("Writing organized PDF")
         writer.write(output)
+        if progress:
+            progress.advance("Writing organized PDF")
     except PDF_ERRORS as exc:
         raise OrganizeValidationError("A selected page could not be processed. Reload the PDFs and try again.") from exc
     finally:

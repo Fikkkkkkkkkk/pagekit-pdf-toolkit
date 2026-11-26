@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Icon } from '../../shared/components/Icon'
+import { PdfProgress } from '../../shared/components/PdfProgress'
+import { usePdfProgress } from '../../shared/components/usePdfProgress'
 import { convertPdfToWord } from './api'
 import type { WordResult } from './types'
 import './pdf-to-word.css'
@@ -16,6 +18,7 @@ export function PdfToWordPage() {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<WordResult | null>(null)
   const resultUrl = useRef<string | null>(null)
+  const progress = usePdfProgress()
 
   useEffect(() => () => { if (resultUrl.current) URL.revokeObjectURL(resultUrl.current) }, [])
 
@@ -23,6 +26,7 @@ export function PdfToWordPage() {
     if (resultUrl.current) URL.revokeObjectURL(resultUrl.current)
     resultUrl.current = null
     setResult(null)
+    progress.reset()
   }
 
   function chooseFile(event: ChangeEvent<HTMLInputElement>) {
@@ -40,12 +44,13 @@ export function PdfToWordPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (loading) return
     if (!file) { setError('Choose one PDF to convert.'); return }
     clearResult()
     setError('')
     setLoading(true)
     try {
-      const { blob, name } = await convertPdfToWord(file)
+      const { blob, name } = await progress.run((callbacks, signal) => convertPdfToWord(file, callbacks, signal))
       const url = URL.createObjectURL(blob)
       resultUrl.current = url
       setResult({ url, name, size: blob.size })
@@ -66,7 +71,7 @@ export function PdfToWordPage() {
         {file && <div className="word-file"><span className="word-file__icon"><Icon name="pages" /></span><span><strong title={file.name}>{file.name}</strong><small>{fileSize(file.size)}</small></span><button type="button" onClick={() => { setFile(null); clearResult(); setError('') }} disabled={loading} aria-label={`Remove ${file.name}`}>×</button></div>}
         {error && <div className="word-message word-message--error" role="alert"><strong>Couldn’t convert this PDF</strong><p>{error}</p></div>}
         <button className="word-submit" type="submit" disabled={loading || !file}>{loading ? 'Converting your PDF…' : 'Convert to Word'}</button>
-        {loading && <p className="word-loading" role="status">Creating an editable DOCX. This may take a moment.</p>}
+        <PdfProgress state={progress.state} onCancel={progress.cancel} />
         {result && <div className="word-success" role="status"><span className="word-success__icon">✓</span><div><h2>Your Word file is ready</h2><p>{result.name} · {fileSize(result.size)}</p></div><a href={result.url} download={result.name}>Download DOCX</a></div>}
         <p className="word-privacy">Your PDF is processed locally by the PageKit backend and removed from temporary storage after conversion.</p>
       </form>

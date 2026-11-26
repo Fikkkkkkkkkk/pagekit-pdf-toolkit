@@ -12,6 +12,8 @@ from docx.shared import Inches, Pt
 from pypdf import PdfReader
 from pypdf.errors import PdfReadError
 
+from ...shared.progress import ProgressReporter
+
 from .layout import add_repeated_header, centered_footer_number, decimal_list_lines, extract_lines, render_page, top_right_header_line
 from .validation import WordConversionError
 
@@ -67,7 +69,7 @@ def _add_images(document: Document, page, available_width: float, available_heig
             document.add_paragraph("[An image on this page could not be converted.]")
 
 
-def convert_pdf(source: Path) -> BytesIO:
+def convert_pdf(source: Path, progress: ProgressReporter | None = None) -> BytesIO:
     try:
         reader = PdfReader(source, strict=False)
         if reader.is_encrypted:
@@ -75,14 +77,21 @@ def convert_pdf(source: Path) -> BytesIO:
         if not reader.pages:
             raise WordConversionError("This PDF has no pages to convert.")
 
+        if progress:
+            progress.start(2 * len(reader.pages) + 1, "Reading source pages")
+
         page_text: list[str] = []
         for number, page in enumerate(reader.pages, start=1):
+            if progress:
+                progress.check()
             text = page.extract_text() or ""
             if len(re.findall(r"\w", text)) < MIN_PAGE_TEXT_CHARS and page.images.keys():
                 raise WordConversionError(
                     f"Page {number} appears scanned or image-only. OCR is not available yet; choose a PDF with selectable text."
                 )
             page_text.append(text)
+            if progress:
+                progress.advance("Reading source pages")
         if not any(re.search(r"\w", text) for text in page_text):
             raise WordConversionError("This PDF has no extractable text. OCR is not available yet; choose a PDF with selectable text.")
 
@@ -101,6 +110,8 @@ def convert_pdf(source: Path) -> BytesIO:
         available_width = section.page_width.inches - section.left_margin.inches - section.right_margin.inches
         available_height = section.page_height.inches - section.top_margin.inches - section.bottom_margin.inches
 
+        if progress:
+            progress.set_phase("Inspecting page layout")
         extractions = [extract_lines(page) for page in reader.pages]
         numbered_lines = decimal_list_lines(extractions)
         list_num_id = document.styles["List Number"]._element.pPr.numPr.numId.val if numbered_lines else None
@@ -147,6 +158,8 @@ def convert_pdf(source: Path) -> BytesIO:
             document.settings._element.append(update_fields)
 
         for index, (page, text, extraction) in enumerate(zip(reader.pages, page_text, extractions)):
+            if progress:
+                progress.check()
             render_page(
                 document,
                 page,
@@ -162,9 +175,15 @@ def convert_pdf(source: Path) -> BytesIO:
                 list_num_id=list_num_id,
             )
             _add_images(document, page, available_width, available_height)
+            if progress:
+                progress.advance("Building Word pages")
 
         output = BytesIO()
+        if progress:
+            progress.set_phase("Writing Word document")
         document.save(output)
+        if progress:
+            progress.advance("Writing Word document")
         output.seek(0)
         return output
     except WordConversionError:

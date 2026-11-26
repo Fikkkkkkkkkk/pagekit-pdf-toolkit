@@ -1,17 +1,10 @@
-export async function splitPdf(file: File, ranges: string): Promise<Blob> {
+﻿import type { PdfProgressCallbacks } from '../../shared/components/progressTypes'
+import { postPdfWithProgress } from '../../shared/components/postPdfWithProgress'
+
+export async function splitPdf(file: File, ranges: string, progress: PdfProgressCallbacks, signal: AbortSignal): Promise<Blob> {
   const body = new FormData()
   body.append('file', file)
   body.append('ranges', ranges)
 
-  let response: Response
-  try {
-    response = await fetch('/api/split-pdf', { method: 'POST', body })
-  } catch {
-    throw new Error('Could not connect to PageKit. Check that the Flask backend is running, then try again.')
-  }
-  if (!response.ok) {
-    const payload = await response.json().catch(() => null) as { error?: string } | null
-    throw new Error(payload?.error || 'The split failed. Check your PDF and page ranges, then try again.')
-  }
-  return response.blob()
+  return (await postPdfWithProgress('/api/split-pdf', body, progress, signal)).blob
 }

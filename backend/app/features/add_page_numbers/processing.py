@@ -7,6 +7,8 @@ from pypdf import PdfReader, PdfWriter
 from pypdf.errors import PdfReadError
 from pypdf.generic import ArrayObject, DecodedStreamObject, DictionaryObject, NameObject
 
+from ...shared.progress import ProgressReporter
+
 from .validation import PageNumberValidationError, validate_options
 
 PDF_ERRORS = (PdfReadError, OSError, ValueError, TypeError, KeyError, IndexError)
@@ -75,7 +77,7 @@ def _add_number(writer: PdfWriter, page, value: int, position: str) -> None:
         page[NameObject("/Contents")] = ArrayObject([*existing, overlay])
 
 
-def number_document(path: Path, position: str, raw_start: str) -> BytesIO:
+def number_document(path: Path, position: str, raw_start: str, progress: ProgressReporter | None = None) -> BytesIO:
     try:
         reader = PdfReader(path, strict=False)
         if reader.is_encrypted:
@@ -91,11 +93,21 @@ def number_document(path: Path, position: str, raw_start: str) -> BytesIO:
     start = validate_options(position, raw_start, page_count)
     writer = PdfWriter()
     output = BytesIO()
+    if progress:
+        progress.start(page_count + 1, "Numbering pages")
     try:
         for index, source in enumerate(reader.pages):
+            if progress:
+                progress.check()
             page = writer.add_page(source)
             _add_number(writer, page, start + index, position)
+            if progress:
+                progress.advance("Numbering pages")
+        if progress:
+            progress.set_phase("Writing numbered PDF")
         writer.write(output)
+        if progress:
+            progress.advance("Writing numbered PDF")
     except PageNumberValidationError:
         raise
     except PDF_ERRORS as exc:
