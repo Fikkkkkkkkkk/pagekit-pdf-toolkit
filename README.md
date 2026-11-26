@@ -1,6 +1,6 @@
 # PageKit
 
-PageKit is a student-focused PDF toolkit. Merge PDF, Split PDF, Organize pages, Rotate PDF, Add page numbers, Crop PDF, Compress PDF, PDF to Word, PDF to JPG, Protect PDF, Unlock PDF, Watermark PDF, and JPG to PDF are available; the other catalog tools are planned and unavailable. Flask handles these features and provides a health check.
+PageKit is a student-focused PDF toolkit. Merge PDF, Split PDF, Organize pages, Rotate PDF, Add page numbers, Crop PDF, Compress PDF, PDF to Word, PDF to JPG, Protect PDF, Unlock PDF, Watermark PDF, JPG to PDF, and Sign PDF are available; the other catalog tools are planned and unavailable. Flask handles these features and provides a health check.
 
 ## Requirements
 
@@ -29,6 +29,15 @@ python -m venv .venv
 ```
 
 The health check is at `http://127.0.0.1:5000/api/health` and returns `{"status":"ok"}`.
+
+## Try Sign PDF
+
+1. Start both servers and open **Sign PDF** from the catalog.
+2. Choose one unlocked PDF, up to 25 MB. Draw a signature, type one, or upload a PNG/JPG image up to 10 MB.
+3. Choose a page, add the signature, then drag it or use the width, position, and angle controls. Reset the angle to 0° when needed. Repeat on other pages; each page keeps its own angle.
+4. Choose **Create signed PDF**, inspect the actual generated page preview, switch pages to review all placements, then download the new copy.
+
+This adds a **visual signature only**. It does not create a cryptographic digital signature or verify identity. The original PDF stays unchanged. Existing PDF.js, Pillow, and pypdf dependencies handle previews and processing locally. Invalid or encrypted PDFs, unreadable images, and out-of-bounds placements are rejected. Temporary uploads are removed after processing or error; abandoned folders are cleared after 15 minutes on startup or later requests.
 
 ## Try Merge PDF
 
@@ -94,7 +103,7 @@ The same relative crop is applied to every page, including pages with different 
 
 Text and vector content stay as PDF content, and page order is preserved. Balanced and Strong recompress eligible RGB or grayscale images only when the new encoded image is smaller. Downsampling depends on each image's largest displayed size. Transparent, masked, unsupported, inline, and images with unknown placement remain unchanged. The backend clones the source document before compression; tests verify bookmarks, URL link annotations, a basic form field, metadata, and page labels. Complex interactive behavior and digital signatures are not guaranteed; rewriting a signed PDF can invalidate its signature. An already optimized PDF may save very little or become larger, which the result panel reports plainly. Processing uses the existing `pypdf` and Pillow libraries locally. Password-protected, unreadable, and oversized PDFs are rejected. The request directory is removed after processing or failure. Progress records are cleared after success, error, or cancellation, or expire after 15 minutes on a later request.
 
-All thirteen available PDF tools show progress from completed work units, and tools that upload to Flask show real upload progress from bytes sent. PDF to JPG additionally counts pages rendered in the browser. Cancel stops the client request and signals the backend to stop at its next processing boundary. Processing percentages reflect completed units, not elapsed time, and reach 100% only when the output response is ready. Progress records are held in this Flask process, so a multiworker deployment would need worker affinity or a shared progress store.
+All fourteen available PDF tools show progress from completed work units, and tools that upload to Flask show real upload progress from bytes sent. PDF to JPG additionally counts pages rendered in the browser. Cancel stops the client request and signals the backend to stop at its next processing boundary. Processing percentages reflect completed units, not elapsed time, and reach 100% only when the output response is ready. Progress records are held in this Flask process, so a multiworker deployment would need worker affinity or a shared progress store.
 
 ## Try Protect PDF
 

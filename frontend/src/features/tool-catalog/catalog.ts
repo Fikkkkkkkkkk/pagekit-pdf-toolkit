@@ -44,7 +44,7 @@ export const tools: Tool[] = [
   { name: 'PDF forms', description: 'Create, fill, and edit PDF forms.', category: 'edit', icon: 'form' },
   { name: 'Protect PDF', description: 'Require a password to open a PDF copy.', category: 'security', release: true, available: true, icon: 'lock' },
   { name: 'Unlock PDF', description: 'Remove an opening password you know.', category: 'security', release: true, available: true, icon: 'unlock' },
-  { name: 'Sign PDF', description: 'Add a signature to a document.', category: 'security', icon: 'sign' },
+  { name: 'Sign PDF', description: 'Place a visual signature on selected pages.', category: 'security', release: true, available: true, icon: 'sign' },
   { name: 'Redact PDF', description: 'Permanently hide sensitive content.', category: 'security', icon: 'redact' },
   { name: 'Compare two PDFs', description: 'Spot changes between versions.', category: 'security', icon: 'compare' },
   { name: 'OCR for scanned PDFs', description: 'Make scanned text searchable.', category: 'intelligence', icon: 'scan' },

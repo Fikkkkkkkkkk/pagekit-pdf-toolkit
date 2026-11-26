@@ -23,6 +23,8 @@ from .features.protect_pdf.routes import protect_pdf_blueprint
 from .features.protect_pdf.storage import cleanup_stale_requests as cleanup_stale_protect_requests
 from .features.rotate_pdf.routes import rotate_pdf_blueprint
 from .features.rotate_pdf.storage import cleanup_stale_requests as cleanup_stale_rotate_requests
+from .features.sign_pdf.routes import sign_pdf_blueprint
+from .features.sign_pdf.storage import cleanup_stale_requests as cleanup_stale_sign_requests
 from .features.split_pdf.routes import split_pdf_blueprint
 from .features.split_pdf.storage import cleanup_stale_requests as cleanup_stale_split_requests
 from .features.unlock_pdf.routes import unlock_pdf_blueprint
@@ -43,6 +45,7 @@ def create_app() -> Flask:
     cleanup_stale_word_requests()
     cleanup_stale_protect_requests()
     cleanup_stale_rotate_requests()
+    cleanup_stale_sign_requests()
     cleanup_stale_split_requests()
     cleanup_stale_unlock_requests()
     cleanup_stale_watermark_requests()
@@ -56,6 +59,7 @@ def create_app() -> Flask:
     app.register_blueprint(pdf_to_jpg_blueprint)
     app.register_blueprint(protect_pdf_blueprint)
     app.register_blueprint(rotate_pdf_blueprint)
+    app.register_blueprint(sign_pdf_blueprint)
     app.register_blueprint(split_pdf_blueprint)
     app.register_blueprint(unlock_pdf_blueprint)
     app.register_blueprint(watermark_pdf_blueprint)
@@ -76,6 +80,7 @@ def create_app() -> Flask:
         cleanup_stale_word_requests()
         cleanup_stale_protect_requests()
         cleanup_stale_rotate_requests()
+        cleanup_stale_sign_requests()
         cleanup_stale_split_requests()
         cleanup_stale_unlock_requests()
         cleanup_stale_watermark_requests()
@@ -96,6 +101,8 @@ def create_app() -> Flask:
             return jsonify(error="The PDF is too large. Choose a file up to 25 MB."), 413
         if request.path == "/api/rotate-pdf":
             return jsonify(error="The PDF is too large. Choose a file up to 25 MB."), 413
+        if request.path == "/api/sign-pdf":
+            return jsonify(error="The upload is too large. Choose a PDF up to 25 MB and a signature image up to 10 MB."), 413
         if request.path == "/api/pdf-to-word":
             return jsonify(error="The PDF is too large. Choose a file up to 25 MB."), 413
         if request.path == "/api/pdf-to-jpg":
