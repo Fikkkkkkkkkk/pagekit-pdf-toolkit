@@ -1,6 +1,6 @@
 # PageKit
 
-PageKit is a student-focused PDF toolkit. Merge PDF, Split PDF, Organize pages, Rotate PDF, Add page numbers, and PDF to Word are available; the other catalog tools are planned and unavailable. Flask handles these features and provides a health check.
+PageKit is a student-focused PDF toolkit. Merge PDF, Split PDF, Organize pages, Rotate PDF, Add page numbers, Crop PDF, and PDF to Word are available; the other catalog tools are planned and unavailable. Flask handles these features and provides a health check.
 
 ## Requirements
 
@@ -75,6 +75,15 @@ Page order and pages you do not turn are preserved. The original file is unchang
 4. Check the approximate placement preview, choose **Create numbered PDF**, then **Download numbered PDF**.
 
 Each following page receives the next number. The original PDF, its page order, and existing page content stay unchanged. Review the downloaded result for overlap with existing headers, footers, or content near the margin. Password-protected or unreadable PDFs are rejected. `pdfjs-dist` renders the local preview, and Flask uses `pypdf` for the numbered copy. Uploads are removed after processing or failure; abandoned request folders are cleaned at startup and on later requests once 15 minutes old.
+
+## Try Crop PDF
+
+1. Start both servers and open **Crop PDF** from the catalog.
+2. Choose one PDF, up to 25 MB. Select a page to preview if the document has multiple pages.
+3. Drag on the preview to select a rectangle, or adjust its left edge, top edge, width, and height using the percentage fields. Review the cropped preview.
+4. Choose **Create cropped PDF**, then **Download cropped PDF**.
+
+The same relative crop is applied to every page, including pages with different dimensions. Page order and underlying content are preserved. **Cropping hides content outside the selected area; it does not securely erase or redact it.** Check the downloaded PDF before sharing. The frontend renders previews locally with `pdfjs-dist`; the Flask backend uses `pypdf`. Password-protected, unreadable, and oversized PDFs are rejected. Uploads are removed after processing or failure, and abandoned request folders are cleaned at startup and on later requests once 15 minutes old.
 
 ## Try PDF to Word
 
