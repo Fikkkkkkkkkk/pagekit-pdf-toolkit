@@ -37,7 +37,7 @@ export const tools: Tool[] = [
   { name: 'Word to PDF', description: 'Make a Word file ready to share.', category: 'convert', icon: 'word' },
   { name: 'PowerPoint to PDF', description: 'Share slides as a PDF.', category: 'convert', icon: 'slides' },
   { name: 'Excel to PDF', description: 'Export a spreadsheet as a PDF.', category: 'convert', icon: 'sheet' },
-  { name: 'Images to PDF', description: 'Combine images into one document.', category: 'convert', release: true, icon: 'image' },
+  { name: 'JPG to PDF', description: 'Combine JPG and PNG images into one PDF.', category: 'convert', release: true, available: true, icon: 'image' },
   { name: 'HTML/webpage to PDF', description: 'Save a web page as a PDF.', category: 'convert', icon: 'web' },
   { name: 'Edit PDF', description: 'Add text, images, shapes, and annotations.', category: 'edit', icon: 'edit' },
   { name: 'Watermark PDF', description: 'Add customizable text to every page.', category: 'edit', release: true, available: true, icon: 'watermark' },

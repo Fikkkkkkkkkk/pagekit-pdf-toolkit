@@ -10,6 +10,8 @@ from .features.compress_pdf.routes import compress_pdf_blueprint
 from .features.compress_pdf.storage import cleanup_stale_requests as cleanup_stale_compress_requests
 from .features.crop_pdf.routes import crop_pdf_blueprint
 from .features.crop_pdf.storage import cleanup_stale_requests as cleanup_stale_crop_requests
+from .features.jpg_to_pdf.routes import jpg_to_pdf_blueprint
+from .features.jpg_to_pdf.storage import cleanup_stale_requests as cleanup_stale_jpg_requests
 from .features.merge_pdf.routes import merge_pdf_blueprint
 from .features.merge_pdf.storage import cleanup_stale_requests as cleanup_stale_merge_requests
 from .features.organize_pages.routes import organize_pages_blueprint
@@ -32,6 +34,7 @@ def create_app() -> Flask:
     cleanup_stale_number_requests()
     cleanup_stale_compress_requests()
     cleanup_stale_crop_requests()
+    cleanup_stale_jpg_requests()
     cleanup_stale_merge_requests()
     cleanup_stale_organize_requests()
     cleanup_stale_word_requests()
@@ -42,6 +45,7 @@ def create_app() -> Flask:
     app.register_blueprint(add_page_numbers_blueprint)
     app.register_blueprint(compress_pdf_blueprint)
     app.register_blueprint(crop_pdf_blueprint)
+    app.register_blueprint(jpg_to_pdf_blueprint)
     app.register_blueprint(merge_pdf_blueprint)
     app.register_blueprint(organize_pages_blueprint)
     app.register_blueprint(pdf_to_word_blueprint)
@@ -60,6 +64,7 @@ def create_app() -> Flask:
         cleanup_stale_number_requests()
         cleanup_stale_compress_requests()
         cleanup_stale_crop_requests()
+        cleanup_stale_jpg_requests()
         cleanup_stale_merge_requests()
         cleanup_stale_organize_requests()
         cleanup_stale_word_requests()
@@ -78,6 +83,8 @@ def create_app() -> Flask:
             return jsonify(error="The PDF is too large. Choose a file up to 25 MB."), 413
         if request.path == "/api/crop-pdf":
             return jsonify(error="The PDF is too large. Choose a file up to 25 MB."), 413
+        if request.path == "/api/jpg-to-pdf":
+            return jsonify(error="The upload is too large. Choose up to 20 images, 25 MB each and 100 MB total."), 413
         if request.path == "/api/add-page-numbers":
             return jsonify(error="The PDF is too large. Choose a file up to 25 MB."), 413
         if request.path == "/api/rotate-pdf":
