@@ -1,3 +1,4 @@
+import { UsageHint } from '../../shared/components/UsageHint'
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Icon } from '../../shared/components/Icon'
 import { PdfProgress } from '../../shared/components/PdfProgress'
@@ -109,9 +110,12 @@ export function CompressPdfPage() {
     <a className="compress-back" href="#catalog">← All tools</a>
     <div className="compress-intro"><span className="eyebrow">OPTIMIZE YOUR DOCUMENTS</span><h1>Compress PDF<span className="accent-dot">.</span></h1><p>Try a smaller copy for upload or sharing, with a quality level you control.</p></div>
     <form onSubmit={handleSubmit}>
-      <div className="compress-panel"><div className="compress-section-heading"><span className="compress-step">01</span><div><h2>Choose your PDF</h2><p>We’ll show its size and a source-page preview.</p></div></div>
-        <label className="compress-picker"><input type="file" accept=".pdf,application/pdf" onChange={chooseFile} disabled={busy} /><span className="compress-picker__icon"><Icon name="compress" /></span><strong>{file ? 'Choose a different PDF' : 'Choose a PDF file'}</strong><span>PDF only · up to 25 MB</span></label>
-        {file && preview && <p className="compress-file-label"><strong>{file.name}</strong> · {fileSize(file.size)} · {preview.pageCount} {preview.pageCount === 1 ? 'page' : 'pages'}</p>}
+      <div className="usage-layout">
+        <div className="compress-panel"><div className="compress-section-heading"><span className="compress-step">01</span><div><h2>Choose your PDF</h2><p>We’ll show its size and a source-page preview.</p></div></div>
+          <label className="compress-picker"><input type="file" accept=".pdf,application/pdf" onChange={chooseFile} disabled={busy} /><span className="compress-picker__icon"><Icon name="compress" /></span><strong>{file ? 'Choose a different PDF' : 'Choose a PDF file'}</strong><span>PDF only · up to 25 MB</span></label>
+          {file && preview && <p className="compress-file-label"><strong>{file.name}</strong> · {fileSize(file.size)} · {preview.pageCount} {preview.pageCount === 1 ? 'page' : 'pages'}</p>}
+        </div>
+        <UsageHint icon="compress" title="Choose the right trade-off" steps={[{ title: 'Check the starting size', detail: 'Check its original size and source preview.' }, { title: 'Pick a level', detail: 'Gentle keeps images intact; stronger levels may soften detail.' }, { title: 'Compare the copy', detail: 'Check the size change and inspect downloaded images.' }]} />
       </div>
 
       {file && preview && <div className="compress-panel"><div className="compress-section-heading"><span className="compress-step">02</span><div><h2>Choose a compression level</h2><p>Stronger compression can reduce image quality. Text and page order stay in place.</p></div></div>

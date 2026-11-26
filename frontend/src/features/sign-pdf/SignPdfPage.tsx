@@ -1,3 +1,4 @@
+import { UsageHint } from '../../shared/components/UsageHint'
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent, type PointerEvent } from 'react'
 import { PdfProgress } from '../../shared/components/PdfProgress'
 import { usePdfProgress } from '../../shared/components/usePdfProgress'
@@ -118,9 +119,12 @@ export function SignPdfPage() {
     <a className="sign-back" href="#catalog">← All tools</a>
     <div className="sign-intro"><span className="eyebrow">SECURITY & REVIEW</span><h1>Sign PDF<span className="accent-dot">.</span></h1><p>Add a visible signature to selected pages of a new PDF copy.</p><div className="sign-notice"><strong>Visual signature only.</strong> This does not create a cryptographic digital signature or verify the signer’s identity.</div></div>
     <form onSubmit={submit}>
-      <div className="sign-panel"><div className="sign-heading"><span>01</span><div><h2>Choose your PDF</h2><p>One unlocked PDF, up to 25 MB. The original stays unchanged.</p></div></div>
-        <label className="sign-picker"><input type="file" accept=".pdf,application/pdf" onChange={choosePdf} disabled={busy} /><strong>{file ? 'Choose a different PDF' : 'Choose a PDF file'}</strong><small>PDF only · up to 25 MB</small></label>
-        {file && source && <p className="sign-file">{file.name} · {source.pageCount} {source.pageCount === 1 ? 'page' : 'pages'}</p>}</div>
+      <div className="usage-layout">
+        <div className="sign-panel"><div className="sign-heading"><span>01</span><div><h2>Choose your PDF</h2><p>One unlocked PDF, up to 25 MB. The original stays unchanged.</p></div></div>
+          <label className="sign-picker"><input type="file" accept=".pdf,application/pdf" onChange={choosePdf} disabled={busy} /><strong>{file ? 'Choose a different PDF' : 'Choose a PDF file'}</strong><small>PDF only · up to 25 MB</small></label>
+          {file && source && <p className="sign-file">{file.name} · {source.pageCount} {source.pageCount === 1 ? 'page' : 'pages'}</p>}</div>
+        <UsageHint icon="sign" title="Place a visual mark" steps={[{ title: 'Open the document', detail: 'Open the page you want to mark.' }, { title: 'Create a signature', detail: 'Draw, type, or upload an image.' }, { title: 'Place and review', detail: 'Move, resize, or turn it on each chosen page; inspect the result.' }]} />
+      </div>
       {file && source && <div className="sign-panel"><div className="sign-heading"><span>02</span><div><h2>Create your signature</h2><p>Draw, type, or upload a PNG or JPG. Your mark will remain an image in the PDF.</p></div></div>
         <div className="sign-modes" role="group" aria-label="Signature method">{(['draw', 'type', 'upload'] as const).map(item => <button key={item} type="button" className={mode === item ? 'active' : ''} aria-pressed={mode === item} onClick={() => setMode(item)} disabled={busy}>{item === 'draw' ? 'Draw' : item === 'type' ? 'Type' : 'Upload image'}</button>)}</div>
         {mode === 'draw' && <SignatureCanvas onSave={useAsset} disabled={busy} />}

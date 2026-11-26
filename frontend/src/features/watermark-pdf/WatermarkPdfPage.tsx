@@ -1,3 +1,4 @@
+import { UsageHint } from '../../shared/components/UsageHint'
 import { useEffect, useRef, useState, type ChangeEvent, type CSSProperties, type FormEvent } from 'react'
 import { Icon } from '../../shared/components/Icon'
 import { PdfProgress } from '../../shared/components/PdfProgress'
@@ -145,9 +146,12 @@ export function WatermarkPdfPage() {
     <a className="watermark-back" href="#catalog">← All tools</a>
     <div className="watermark-intro"><span className="eyebrow">EDIT YOUR DOCUMENTS</span><h1>Watermark PDF<span className="accent-dot">.</span></h1><p>Place a customizable text mark on every page of a new PDF copy.</p></div>
     <form onSubmit={handleSubmit}>
-      <div className="watermark-panel"><div className="watermark-heading"><span className="watermark-step">01</span><div><h2>Choose your PDF</h2><p>Upload one unlocked PDF. Your original stays unchanged.</p></div></div>
-        <label className="watermark-picker"><input type="file" accept=".pdf,application/pdf" onChange={chooseFile} disabled={busy} /><span className="watermark-picker__icon"><Icon name="watermark" /></span><strong>{file ? 'Choose a different PDF' : 'Choose a PDF file'}</strong><span>PDF only · up to 25 MB</span></label>
-        {file && source && <p className="watermark-file"><strong>{file.name}</strong> · {fileSize(file.size)} · {source.pageCount} {source.pageCount === 1 ? 'page' : 'pages'}</p>}
+      <div className="usage-layout">
+        <div className="watermark-panel"><div className="watermark-heading"><span className="watermark-step">01</span><div><h2>Choose your PDF</h2><p>Upload one unlocked PDF. Your original stays unchanged.</p></div></div>
+          <label className="watermark-picker"><input type="file" accept=".pdf,application/pdf" onChange={chooseFile} disabled={busy} /><span className="watermark-picker__icon"><Icon name="watermark" /></span><strong>{file ? 'Choose a different PDF' : 'Choose a PDF file'}</strong><span>PDF only · up to 25 MB</span></label>
+          {file && source && <p className="watermark-file"><strong>{file.name}</strong> · {fileSize(file.size)} · {source.pageCount} {source.pageCount === 1 ? 'page' : 'pages'}</p>}
+        </div>
+        <UsageHint icon="watermark" title="Make the mark fit" steps={[{ title: 'Preview the source page', detail: 'Preview the first page of your document.' }, { title: 'Design the text', detail: 'Set position, style, opacity, and layering.' }, { title: 'Inspect the result', detail: 'The live view is approximate; review the generated PDF.' }]} />
       </div>
 
       {file && source && <div className="watermark-panel"><div className="watermark-heading"><span className="watermark-step">02</span><div><h2>Design your watermark</h2><p>The same settings apply to every page. Changes appear in the approximate preview.</p></div></div>

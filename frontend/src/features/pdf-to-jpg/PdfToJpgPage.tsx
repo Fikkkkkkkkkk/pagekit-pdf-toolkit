@@ -1,3 +1,4 @@
+import { UsageHint } from '../../shared/components/UsageHint'
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Icon } from '../../shared/components/Icon'
 import { usePdfProgress } from '../../shared/components/usePdfProgress'
@@ -121,10 +122,13 @@ export function PdfToJpgPage() {
     <a className="pdfjpg-back" href="#catalog">← All tools</a>
     <div className="pdfjpg-intro"><span className="eyebrow">CONVERT YOUR FILES</span><h1>PDF to JPG<span className="accent-dot">.</span></h1><p>Save every PDF page as a JPG, together in one ZIP.</p></div>
     <form onSubmit={handleSubmit}>
-      <div className="pdfjpg-panel"><div className="pdfjpg-heading"><span className="pdfjpg-step">01</span><div><h2>Choose your PDF</h2><p>One unlocked PDF, up to 25 MB. Your original stays unchanged.</p></div></div>
-        <label className="pdfjpg-picker"><input type="file" accept=".pdf,application/pdf" onChange={chooseFile} disabled={previewBusy || busy} /><span className="pdfjpg-picker__icon"><Icon name="image" /></span><strong>{file ? 'Choose a different PDF' : 'Choose a PDF file'}</strong><span>PDF only · up to 25 MB</span></label>
-        {file && <p className="pdfjpg-file"><strong>{file.name}</strong> · {fileSize(file.size)} · {thumbnails.length} {thumbnails.length === 1 ? 'page' : 'pages'}</p>}
-        {previewBusy && <div className="pdfjpg-progress" role="status"><strong>Preparing page previews</strong><span>{previewProgress ? `${previewProgress.completed} of ${previewProgress.total} pages` : 'Opening PDF…'}</span><progress max={previewProgress?.total || 1} value={previewProgress?.completed || 0} /><button type="button" onClick={cancel}>Cancel</button></div>}
+      <div className="usage-layout">
+        <div className="pdfjpg-panel"><div className="pdfjpg-heading"><span className="pdfjpg-step">01</span><div><h2>Choose your PDF</h2><p>One unlocked PDF, up to 25 MB. Your original stays unchanged.</p></div></div>
+          <label className="pdfjpg-picker"><input type="file" accept=".pdf,application/pdf" onChange={chooseFile} disabled={previewBusy || busy} /><span className="pdfjpg-picker__icon"><Icon name="image" /></span><strong>{file ? 'Choose a different PDF' : 'Choose a PDF file'}</strong><span>PDF only · up to 25 MB</span></label>
+          {file && <p className="pdfjpg-file"><strong>{file.name}</strong> · {fileSize(file.size)} · {thumbnails.length} {thumbnails.length === 1 ? 'page' : 'pages'}</p>}
+          {previewBusy && <div className="pdfjpg-progress" role="status"><strong>Preparing page previews</strong><span>{previewProgress ? `${previewProgress.completed} of ${previewProgress.total} pages` : 'Opening PDF…'}</span><progress max={previewProgress?.total || 1} value={previewProgress?.completed || 0} /><button type="button" onClick={cancel}>Cancel</button></div>}
+        </div>
+        <UsageHint icon="image" title="Export every page" steps={[{ title: 'Preview each page', detail: 'PageKit prepares a thumbnail for each page.' }, { title: 'Review the pages', detail: 'Each page becomes a JPG in its existing order.' }, { title: 'Pick quality', detail: 'Download one ZIP with page-numbered images.' }]} />
       </div>
 
       {thumbnails.length > 0 && <div className="pdfjpg-panel"><div className="pdfjpg-heading"><span className="pdfjpg-step">02</span><div><h2>Review the pages</h2><p>Every page shown here will become one JPG in the same order.</p></div></div><ol className="pdfjpg-thumbnails">{thumbnails.map(page => <li key={page.number}><img src={page.image} alt={`Preview of PDF page ${page.number}`} /><span>Page {page.number}</span></li>)}</ol></div>}

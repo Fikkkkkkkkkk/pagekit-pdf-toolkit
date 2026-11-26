@@ -1,3 +1,4 @@
+import { UsageHint } from '../../shared/components/UsageHint'
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Icon } from '../../shared/components/Icon'
 import { PdfProgress } from '../../shared/components/PdfProgress'
@@ -109,9 +110,12 @@ export function AddPageNumbersPage() {
     <a className="number-back" href="#catalog">← All tools</a>
     <div className="number-intro"><span className="eyebrow">ORGANIZE YOUR DOCUMENTS</span><h1>Add page numbers<span className="accent-dot">.</span></h1><p>Make your notes and citations easier to follow.</p></div>
     <form onSubmit={handleSubmit}>
-      <div className="number-panel"><div className="number-section-heading"><span className="number-step">01</span><div><h2>Choose your PDF</h2><p>We’ll show the first page so you can choose where numbers go.</p></div></div>
-        <label className="number-picker"><input type="file" accept=".pdf,application/pdf" onChange={chooseFile} disabled={busy} /><span className="number-picker__icon"><Icon name="numbers" /></span><strong>{file ? 'Choose a different PDF' : 'Choose a PDF file'}</strong><span>PDF only · up to 25 MB</span></label>
-        {file && preview && <p className="number-file-label"><strong>{file.name}</strong> · {fileSize(file.size)} · {preview.pageCount} {preview.pageCount === 1 ? 'page' : 'pages'}</p>}
+      <div className="usage-layout">
+        <div className="number-panel"><div className="number-section-heading"><span className="number-step">01</span><div><h2>Choose your PDF</h2><p>We’ll show the first page so you can choose where numbers go.</p></div></div>
+          <label className="number-picker"><input type="file" accept=".pdf,application/pdf" onChange={chooseFile} disabled={busy} /><span className="number-picker__icon"><Icon name="numbers" /></span><strong>{file ? 'Choose a different PDF' : 'Choose a PDF file'}</strong><span>PDF only · up to 25 MB</span></label>
+          {file && preview && <p className="number-file-label"><strong>{file.name}</strong> · {fileSize(file.size)} · {preview.pageCount} {preview.pageCount === 1 ? 'page' : 'pages'}</p>}
+        </div>
+        <UsageHint icon="numbers" title="Number every page" steps={[{ title: 'Load the pages to number', detail: 'Use the document whose pages need labels.' }, { title: 'Set the sequence', detail: 'Pick a position and the number for page one.' }, { title: 'Check the margins', detail: 'Preview the placement, then inspect the copy for overlap.' }]} />
       </div>
 
       {file && preview && <div className="number-panel"><div className="number-section-heading"><span className="number-step">02</span><div><h2>Set the numbering</h2><p>Numbers appear in the same spot on every page. The first page starts at your chosen number.</p></div></div>

@@ -1,3 +1,4 @@
+import { UsageHint } from '../../shared/components/UsageHint'
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Icon } from '../../shared/components/Icon'
 import { PdfProgress } from '../../shared/components/PdfProgress'
@@ -70,9 +71,12 @@ export function UnlockPdfPage() {
     <a className="unlock-back" href="#catalog">← All tools</a>
     <div className="unlock-intro"><span className="eyebrow">SECURITY & REVIEW</span><h1>Unlock PDF<span className="accent-dot">.</span></h1><p>Use the password you know to make a copy that opens without it.</p></div>
     <form onSubmit={handleSubmit}>
-      <div className="unlock-panel"><div className="unlock-heading"><span className="unlock-step">01</span><div><h2>Choose your locked PDF</h2><p>Upload one password-protected PDF. Your original stays unchanged.</p></div></div>
-        <label className="unlock-picker"><input type="file" accept=".pdf,application/pdf" onChange={chooseFile} disabled={busy} /><span className="unlock-picker__icon"><Icon name="unlock" /></span><strong>{file ? 'Choose a different PDF' : 'Choose a PDF file'}</strong><span>PDF only · up to 25 MB</span></label>
-        {file && <p className="unlock-file"><strong>{file.name}</strong> · {fileSize(file.size)}</p>}
+      <div className="usage-layout">
+        <div className="unlock-panel"><div className="unlock-heading"><span className="unlock-step">01</span><div><h2>Choose your locked PDF</h2><p>Upload one password-protected PDF. Your original stays unchanged.</p></div></div>
+          <label className="unlock-picker"><input type="file" accept=".pdf,application/pdf" onChange={chooseFile} disabled={busy} /><span className="unlock-picker__icon"><Icon name="unlock" /></span><strong>{file ? 'Choose a different PDF' : 'Choose a PDF file'}</strong><span>PDF only · up to 25 MB</span></label>
+          {file && <p className="unlock-file"><strong>{file.name}</strong> · {fileSize(file.size)}</p>}
+        </div>
+        <UsageHint icon="unlock" title="Use the known password" steps={[{ title: 'Start with a locked PDF', detail: 'Use a file that asks for an opening password.' }, { title: 'Enter that password', detail: 'PageKit cannot recover or guess a password.' }, { title: 'Check the copy', detail: 'Download and open it without the password prompt.' }]} />
       </div>
       {file && <div className="unlock-panel"><div className="unlock-heading"><span className="unlock-step">02</span><div><h2>Enter its opening password</h2><p>PageKit uses only the password you provide. It cannot guess or recover one.</p></div></div>
         <label className="unlock-password">Known password<input type={showPassword ? 'text' : 'password'} value={password} onChange={event => { setPassword(event.target.value); clearResult(); setError('') }} autoComplete="off" disabled={busy} required /></label>
