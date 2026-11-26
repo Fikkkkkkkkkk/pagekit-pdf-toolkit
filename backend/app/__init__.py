@@ -2,6 +2,8 @@
 
 from flask import Flask, jsonify, request
 
+from .features.add_page_numbers.routes import add_page_numbers_blueprint
+from .features.add_page_numbers.storage import cleanup_stale_requests as cleanup_stale_number_requests
 from .features.merge_pdf.routes import merge_pdf_blueprint
 from .features.merge_pdf.storage import cleanup_stale_requests as cleanup_stale_merge_requests
 from .features.organize_pages.routes import organize_pages_blueprint
@@ -17,11 +19,13 @@ from .features.split_pdf.storage import cleanup_stale_requests as cleanup_stale_
 def create_app() -> Flask:
     app = Flask(__name__)
     app.config["MAX_CONTENT_LENGTH"] = 101 * 1024 * 1024
+    cleanup_stale_number_requests()
     cleanup_stale_merge_requests()
     cleanup_stale_organize_requests()
     cleanup_stale_word_requests()
     cleanup_stale_rotate_requests()
     cleanup_stale_split_requests()
+    app.register_blueprint(add_page_numbers_blueprint)
     app.register_blueprint(merge_pdf_blueprint)
     app.register_blueprint(organize_pages_blueprint)
     app.register_blueprint(pdf_to_word_blueprint)
@@ -30,6 +34,7 @@ def create_app() -> Flask:
 
     @app.before_request
     def remove_stale_pdf_files():
+        cleanup_stale_number_requests()
         cleanup_stale_merge_requests()
         cleanup_stale_organize_requests()
         cleanup_stale_word_requests()
@@ -42,6 +47,8 @@ def create_app() -> Flask:
 
     @app.errorhandler(413)
     def request_too_large(_error):
+        if request.path == "/api/add-page-numbers":
+            return jsonify(error="The PDF is too large. Choose a file up to 25 MB."), 413
         if request.path == "/api/rotate-pdf":
             return jsonify(error="The PDF is too large. Choose a file up to 25 MB."), 413
         if request.path == "/api/pdf-to-word":

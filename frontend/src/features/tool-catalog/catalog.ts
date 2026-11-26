@@ -23,7 +23,7 @@ export const tools: Tool[] = [
   { name: 'Split PDF', description: 'Keep only the sections you need.', category: 'organize', release: true, available: true, icon: 'split' },
   { name: 'Organize pages', description: 'Reorder, add, or remove pages.', category: 'organize', release: true, available: true, icon: 'pages' },
   { name: 'Rotate PDF', description: 'Turn sideways pages the right way up.', category: 'organize', release: true, available: true, icon: 'rotate' },
-  { name: 'Add page numbers', description: 'Make notes and citations easier to follow.', category: 'organize', release: true, icon: 'numbers' },
+  { name: 'Add page numbers', description: 'Make notes and citations easier to follow.', category: 'organize', release: true, available: true, icon: 'numbers' },
   { name: 'Crop PDF', description: 'Trim extra space from pages.', category: 'organize', icon: 'crop' },
   { name: 'Repair PDF', description: 'Try to recover a damaged document.', category: 'organize', icon: 'repair' },
   { name: 'Scan to PDF', description: 'Turn a scan into a shareable PDF.', category: 'organize', icon: 'scan' },
