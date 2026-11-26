@@ -1,6 +1,6 @@
 # PageKit
 
-PageKit is a student-focused PDF toolkit. Merge PDF, Split PDF, Organize pages, Rotate PDF, and PDF to Word are available; the other catalog tools are planned and unavailable. Flask handles these features and provides a health check.
+PageKit is a student-focused PDF toolkit. Merge PDF, Split PDF, Organize pages, Rotate PDF, Add page numbers, and PDF to Word are available; the other catalog tools are planned and unavailable. Flask handles these features and provides a health check.
 
 ## Requirements
 
@@ -66,6 +66,15 @@ The backend validates both PDFs, the page order, and the insertion position. Pas
 4. Choose **Create rotated PDF**, then **Download rotated PDF**.
 
 Page order and pages you do not turn are preserved. The original file is unchanged. Password-protected or unreadable PDFs are rejected. `pdfjs-dist` renders local previews, and Flask uses `pypdf` to write the result. Uploads are removed after processing or failure; abandoned request folders are cleaned at startup and on later requests once 15 minutes old.
+
+## Try Add page numbers
+
+1. Start both servers and open **Add page numbers** from the catalog.
+2. Choose one PDF, up to 25 MB. PageKit shows a preview of its first page.
+3. Choose top or bottom placement, then left, center, or right. Enter the number to use on the first page.
+4. Check the approximate placement preview, choose **Create numbered PDF**, then **Download numbered PDF**.
+
+Each following page receives the next number. The original PDF, its page order, and existing page content stay unchanged. Review the downloaded result for overlap with existing headers, footers, or content near the margin. Password-protected or unreadable PDFs are rejected. `pdfjs-dist` renders the local preview, and Flask uses `pypdf` for the numbered copy. Uploads are removed after processing or failure; abandoned request folders are cleaned at startup and on later requests once 15 minutes old.
 
 ## Try PDF to Word
 
