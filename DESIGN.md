@@ -69,12 +69,13 @@ Batch processing and reusable workflows that chain multiple tools are long-term 
 - Images to PDF
 - Compress PDF
 - Add page numbers
+- Crop PDF
 - PDF to Word
 
-The foundation milestone built the app shell, catalog, documentation, and backend health check. Merge PDF, Split PDF, Organize pages, Rotate PDF, Add page numbers, and PDF to Word are now available; the other two active-release tools remain planned and unavailable. PDF to Word was moved into the active release at the user's request on 2026-11-25. The original seven-tool scope is otherwise unchanged.
+The foundation milestone built the app shell, catalog, documentation, and backend health check. Merge PDF, Split PDF, Organize pages, Rotate PDF, Add page numbers, Crop PDF, and PDF to Word are now available; the other two active-release tools remain planned and unavailable. PDF to Word was moved into the active release at the user's request on 2026-11-25, and Crop PDF on 2026-11-26. The original seven-tool scope is otherwise unchanged.
 
 ### Later milestones
-- Document preparation: Crop PDF, Repair PDF, Scan to PDF.
+- Document preparation: Repair PDF, Scan to PDF.
 - Conversion: PDF to PowerPoint, PDF to Excel, PDF to JPG and extract images, PDF to PDF/A, PDF to Markdown, Word to PDF, PowerPoint to PDF, Excel to PDF, HTML/webpage to PDF.
 - Editing and review: Edit PDF with text, images, shapes, and annotations; Add a text or image watermark; Create, fill, and edit PDF forms; Protect PDF with a password; Unlock PDF; Sign PDF; Redact PDF; Compare two PDFs.
 - Intelligence: OCR for scanned PDFs, AI PDF summarizer, Translate PDF.
@@ -94,6 +95,7 @@ Choose tool → select files → preview/options → process → download. Each 
 - Split PDF uses `pypdf` to create one PDF per entered range and Python's standard `zipfile` module to package them in range order. Neither feature uses an external document service or native binary dependency.
 - Organize pages uses `pypdf` to validate uploaded PDFs and write a new document in the submitted page order. The frontend uses Mozilla's [`pdfjs-dist`](https://www.npmjs.com/package/pdfjs-dist) to render numbered thumbnails locally in the browser; its worker is bundled with Vite. The backend validates the final page references and insertion position independently of the preview. The original PDFs are not modified.
 - Rotate PDF uses the existing `pypdf` to rotate selected pages in 90-degree steps while preserving page order and unselected pages. The frontend uses the existing `pdfjs-dist` dependency to preview every page locally and show chosen orientations. The Flask endpoint validates the uploaded PDF and one rotation value per page before producing a new PDF in memory. The original PDF is not modified.
+- Crop PDF uses `pypdf` to set a new crop box on every page from the same relative rectangle. The browser uses `pdfjs-dist` to preview a chosen page and show the selected visible area before processing. The backend maps that area through each page's existing crop box and rotation, preserving page content and order. Cropping hides content outside the box; it is not secure redaction and does not remove that content from the file.
 - Add page numbers uses `pypdf` to append a numbered text overlay to every page. Users choose top or bottom and left, center, or right placement, plus a positive starting number. The frontend uses `pdfjs-dist` to preview the first page and approximate number placement. The backend maps positions through each page's existing rotation and crop box, preserves source page order and content, and returns a new PDF in memory. Tight page margins or existing headers and footers may overlap the added number.
 - PDF to Word uses the existing `pypdf` for text and image extraction, plus [`python-docx`](https://pypi.org/project/python-docx/) to write editable DOCX files and the `pypdf[image]` Pillow dependency to decode embedded images. `python-docx` 1.2 is MIT licensed and supports Python 3.9+; [Pillow 12.3](https://pypi.org/project/pillow/12.3.0/) is MIT-CMU licensed and supports Python 3.10+. Both were checked for this project's Python 3.10 runtime. This approach keeps conversion local and avoids a paid service.
 - Conversion reconstructs editable text from positioned PDF fragments. It uses available font names, sizes, and drawing information to approximate bold, italic, underlined text, centered and right-aligned paragraphs, line and paragraph spacing, page breaks, and simple two-column regions (as Word tables). A consistent repeated top-right line is placed in the Word header at its source position; body offsets are measured below that header. It preserves basic page size and extracts embedded images after the text on their source page. Complex columns, tables, exact font metrics, and image placement can still differ because PDF content does not carry Word paragraph or table structure. PDF text extraction order can vary with the source document. A page with too little selectable text and images is treated as likely scanned/image-only, and conversion stops with an OCR-unavailable message. No OCR is performed.
@@ -106,7 +108,7 @@ Choose tool → select files → preview/options → process → download. Each 
 
 ## File privacy and temporary files
 
-- Temporary uploaded files have a 15-minute maximum retention threshold. Merge PDF, Split PDF, Organize pages, Rotate PDF, Add page numbers, and PDF to Word each delete their private request directory immediately after processing or an error. Abandoned directories are cleaned at startup and during later requests once they reach 15 minutes. Outputs are returned from memory and are not stored as server files. Organize pages and Rotate PDF render thumbnails locally before upload; Add page numbers renders its first-page preview locally.
+- Temporary uploaded files have a 15-minute maximum retention threshold. Merge PDF, Split PDF, Organize pages, Rotate PDF, Add page numbers, Crop PDF, and PDF to Word each delete their private request directory immediately after processing or an error. Abandoned directories are cleaned at startup and during later requests once they reach 15 minutes. Outputs are returned from memory and are not stored as server files. Organize pages and Rotate PDF render thumbnails locally before upload; Add page numbers and Crop PDF render previews locally.
 - Use private, per-request temporary storage outside public web assets, with unpredictable names and strict file-size and type checks. Never trust a client-supplied path or filename for storage.
 - Delete temporary inputs and outputs after completion, failure, cancellation, and expiration. Account for interrupted requests and process restarts with a cleanup mechanism.
 - Do not log document contents, passwords, or sensitive filenames. Use HTTPS in deployment and return only the files the request produced.
@@ -130,6 +132,7 @@ Choose tool → select files → preview/options → process → download. Each 
 
 ## Change log
 
+- 2026-11-26: At the user's request, moved Crop PDF from later milestones into the active release and implemented it with a browser crop preview, relative crop boxes on every page, local validation and processing, and 15-minute temporary-file cleanup. It hides content without securely erasing it. Other tool behavior and technology choices remain unchanged.
 - 2026-11-26: Implemented Add page numbers with six placements, a selectable starting number, browser preview, local `pypdf` overlay, validation, and the existing 15-minute temporary-file policy. Marked it available without changing the release scope or other tools.
 - 2026-11-26: Implemented Rotate PDF with per-page and whole-document 90-degree turns, browser page previews, backend validation, and the existing 15-minute temporary-file policy. Marked it available without changing the active-release scope or other tools.
 - 2026-11-25: Preserved spaces at mixed-font run boundaries, detected underlines drawn as thin filled rectangles, and applied the source's list-paragraph styling to literal bracketed legal markers without automatic numbering. Kept party numbering, header, footer, and page placement rules unchanged.
