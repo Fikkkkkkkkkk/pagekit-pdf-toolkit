@@ -37,7 +37,7 @@ export function ToolCatalog() {
   return (
     <section className="catalog-section" id="catalog" aria-labelledby="catalog-title">
       <div className="catalog-heading">
-        <div><span className="eyebrow">THE TOOL LIBRARY</span><h2 id="catalog-title">Find your next PDF tool<span className="accent-dot">.</span></h2><p>Merge PDF, Split PDF, Organize pages, Rotate PDF, Add page numbers, Crop PDF, Compress PDF, and PDF to Word are ready to use. Explore the rest of the toolkit planned for PageKit.</p></div>
+        <div><span className="eyebrow">THE TOOL LIBRARY</span><h2 id="catalog-title">Find your next PDF tool<span className="accent-dot">.</span></h2><p>Merge PDF, Split PDF, Organize pages, Rotate PDF, Add page numbers, Crop PDF, Compress PDF, PDF to Word, and Protect PDF are ready to use. Explore the rest of the toolkit planned for PageKit.</p></div>
         <span className="catalog-count">{tools.length} tools in the library</span>
       </div>
 

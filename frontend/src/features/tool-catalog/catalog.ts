@@ -42,7 +42,7 @@ export const tools: Tool[] = [
   { name: 'Edit PDF', description: 'Add text, images, shapes, and annotations.', category: 'edit', icon: 'edit' },
   { name: 'Add watermark', description: 'Place a text or image mark on pages.', category: 'edit', icon: 'watermark' },
   { name: 'PDF forms', description: 'Create, fill, and edit PDF forms.', category: 'edit', icon: 'form' },
-  { name: 'Protect PDF', description: 'Add password protection.', category: 'security', icon: 'lock' },
+  { name: 'Protect PDF', description: 'Require a password to open a PDF copy.', category: 'security', release: true, available: true, icon: 'lock' },
   { name: 'Unlock PDF', description: 'Remove a password you know.', category: 'security', icon: 'unlock' },
   { name: 'Sign PDF', description: 'Add a signature to a document.', category: 'security', icon: 'sign' },
   { name: 'Redact PDF', description: 'Permanently hide sensitive content.', category: 'security', icon: 'redact' },
