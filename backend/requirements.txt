@@ -1,4 +1,4 @@
 Flask>=3.1,<4
-pypdf[image]>=5.9,<7
+pypdf[image,crypto]>=5.9,<7
 python-docx>=1.2,<2
 Pillow>=12.3,<13
