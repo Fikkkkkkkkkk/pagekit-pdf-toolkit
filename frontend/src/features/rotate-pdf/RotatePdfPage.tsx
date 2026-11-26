@@ -1,3 +1,4 @@
+import { UsageHint } from '../../shared/components/UsageHint'
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Icon } from '../../shared/components/Icon'
 import { PdfProgress } from '../../shared/components/PdfProgress'
@@ -97,9 +98,12 @@ export function RotatePdfPage() {
     <a className="rotate-back" href="#catalog">← All tools</a>
     <div className="rotate-intro"><span className="eyebrow">ORGANIZE YOUR DOCUMENTS</span><h1>Rotate PDF<span className="accent-dot">.</span></h1><p>Turn individual pages or the whole document in 90° steps.</p></div>
     <form onSubmit={handleSubmit}>
-      <div className="rotate-panel"><div className="rotate-section-heading"><span className="rotate-step">01</span><div><h2>Choose your PDF</h2><p>We’ll show every page so you can check which way it should face.</p></div></div>
-        <label className="rotate-picker"><input type="file" accept=".pdf,application/pdf" onChange={chooseFile} disabled={busy} /><span className="rotate-picker__icon"><Icon name="rotate" /></span><strong>{file ? 'Choose a different PDF' : 'Choose a PDF file'}</strong><span>PDF only · up to 25 MB</span></label>
-        {file && <p className="rotate-file-label"><strong>{file.name}</strong> · {fileSize(file.size)} · {pages.length} {pages.length === 1 ? 'page' : 'pages'}</p>}
+      <div className="usage-layout">
+        <div className="rotate-panel"><div className="rotate-section-heading"><span className="rotate-step">01</span><div><h2>Choose your PDF</h2><p>We’ll show every page so you can check which way it should face.</p></div></div>
+          <label className="rotate-picker"><input type="file" accept=".pdf,application/pdf" onChange={chooseFile} disabled={busy} /><span className="rotate-picker__icon"><Icon name="rotate" /></span><strong>{file ? 'Choose a different PDF' : 'Choose a PDF file'}</strong><span>PDF only · up to 25 MB</span></label>
+          {file && <p className="rotate-file-label"><strong>{file.name}</strong> · {fileSize(file.size)} · {pages.length} {pages.length === 1 ? 'page' : 'pages'}</p>}
+        </div>
+        <UsageHint icon="rotate" title="Turn only what needs turning" steps={[{ title: 'Spot pages to turn', detail: 'Review the page thumbnails and their orientation.' }, { title: 'Turn pages', detail: 'Use left or right on one page or all pages.' }, { title: 'Review and save', detail: 'Check the preview before downloading the copy.' }]} />
       </div>
 
       {file && <div className="rotate-panel"><div className="rotate-section-heading"><span className="rotate-step">02</span><div><h2>Turn and preview pages</h2><p>Use each page’s controls, or turn every page together. Pages stay in their original order.</p></div></div>

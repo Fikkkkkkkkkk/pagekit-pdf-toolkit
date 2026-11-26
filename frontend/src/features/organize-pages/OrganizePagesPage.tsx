@@ -1,3 +1,4 @@
+import { UsageHint } from '../../shared/components/UsageHint'
 import { useEffect, useRef, useState, type ChangeEvent, type DragEvent, type FormEvent } from 'react'
 import { Icon } from '../../shared/components/Icon'
 import { PdfProgress } from '../../shared/components/PdfProgress'
@@ -174,9 +175,12 @@ export function OrganizePagesPage() {
     <a className="organize-back" href="#catalog">← All tools</a>
     <div className="organize-intro"><span className="eyebrow">ORGANIZE YOUR DOCUMENTS</span><h1>Organize pages<span className="accent-dot">.</span></h1><p>Move, remove, and add pages until your document is just right.</p></div>
     <form onSubmit={handleSubmit}>
-      <div className="organize-panel"><div className="organize-section-heading"><span className="organize-step">01</span><div><h2>Choose your PDF</h2><p>We’ll show each page so you can plan the new order.</p></div></div>
-        <label className="organize-picker"><input type="file" accept=".pdf,application/pdf" onChange={chooseOriginal} disabled={busy} /><span className="organize-picker__icon"><Icon name="pages" /></span><strong>{original ? 'Choose a different original PDF' : 'Choose a PDF file'}</strong><span>PDF only · up to 25 MB</span></label>
-        {original && <p className="organize-file-label"><strong>{original.name}</strong> · {fileSize(original.size)} · {pages.filter(item => item.source === 'original').length} original pages kept</p>}
+      <div className="usage-layout">
+        <div className="organize-panel"><div className="organize-section-heading"><span className="organize-step">01</span><div><h2>Choose your PDF</h2><p>We’ll show each page so you can plan the new order.</p></div></div>
+          <label className="organize-picker"><input type="file" accept=".pdf,application/pdf" onChange={chooseOriginal} disabled={busy} /><span className="organize-picker__icon"><Icon name="pages" /></span><strong>{original ? 'Choose a different original PDF' : 'Choose a PDF file'}</strong><span>PDF only · up to 25 MB</span></label>
+          {original && <p className="organize-file-label"><strong>{original.name}</strong> · {fileSize(original.size)} · {pages.filter(item => item.source === 'original').length} original pages kept</p>}
+        </div>
+        <UsageHint icon="pages" title="Build your page order" steps={[{ title: 'Start with the main PDF', detail: 'See each page before changing the document.' }, { title: 'Arrange the pages', detail: 'Move or delete pages; add a second PDF if needed.' }, { title: 'Review the order', detail: 'Check the numbered thumbnails before downloading.' }]} />
       </div>
 
       {original && <><div className="organize-panel"><div className="organize-section-heading"><span className="organize-step">02</span><div><h2>Add pages from another PDF</h2><p>Choose where its pages go. You can rearrange them afterward.</p></div></div>

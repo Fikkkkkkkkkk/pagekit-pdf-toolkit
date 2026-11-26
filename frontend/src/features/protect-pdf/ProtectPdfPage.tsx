@@ -1,3 +1,4 @@
+import { UsageHint } from '../../shared/components/UsageHint'
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Icon } from '../../shared/components/Icon'
 import { PdfProgress } from '../../shared/components/PdfProgress'
@@ -72,9 +73,12 @@ export function ProtectPdfPage() {
     <a className="protect-back" href="#catalog">← All tools</a>
     <div className="protect-intro"><span className="eyebrow">SECURITY & REVIEW</span><h1>Protect PDF<span className="accent-dot">.</span></h1><p>Create a copy that asks for your password before opening.</p></div>
     <form onSubmit={handleSubmit}>
-      <div className="protect-panel"><div className="protect-heading"><span className="protect-step">01</span><div><h2>Choose your PDF</h2><p>Your original stays unchanged. Choose an unlocked PDF.</p></div></div>
-        <label className="protect-picker"><input type="file" accept=".pdf,application/pdf" onChange={chooseFile} disabled={busy} /><span className="protect-picker__icon"><Icon name="lock" /></span><strong>{file ? 'Choose a different PDF' : 'Choose a PDF file'}</strong><span>PDF only · up to 25 MB</span></label>
-        {file && <p className="protect-file"><strong>{file.name}</strong> · {fileSize(file.size)}</p>}
+      <div className="usage-layout">
+        <div className="protect-panel"><div className="protect-heading"><span className="protect-step">01</span><div><h2>Choose your PDF</h2><p>Your original stays unchanged. Choose an unlocked PDF.</p></div></div>
+          <label className="protect-picker"><input type="file" accept=".pdf,application/pdf" onChange={chooseFile} disabled={busy} /><span className="protect-picker__icon"><Icon name="lock" /></span><strong>{file ? 'Choose a different PDF' : 'Choose a PDF file'}</strong><span>PDF only · up to 25 MB</span></label>
+          {file && <p className="protect-file"><strong>{file.name}</strong> · {fileSize(file.size)}</p>}
+        </div>
+        <UsageHint icon="lock" title="Keep the password safe" steps={[{ title: 'Start with an unlocked PDF', detail: 'The original file stays as it is.' }, { title: 'Set a password', detail: 'Enter it twice and keep it somewhere safe.' }, { title: 'Check the copy', detail: 'Open the download to confirm it asks for the password.' }]} />
       </div>
       {file && <div className="protect-panel"><div className="protect-heading"><span className="protect-step">02</span><div><h2>Set an opening password</h2><p>Anyone opening the new PDF will need this password. Keep a copy somewhere safe.</p></div></div>
         <div className="protect-fields"><label>Password<input type={showPassword ? 'text' : 'password'} value={password} onChange={event => { setPassword(event.target.value); clearResult(); setError('') }} autoComplete="new-password" disabled={busy} required /></label><label>Confirm password<input type={showPassword ? 'text' : 'password'} value={confirmation} onChange={event => { setConfirmation(event.target.value); clearResult(); setError('') }} autoComplete="new-password" disabled={busy} required /></label></div>

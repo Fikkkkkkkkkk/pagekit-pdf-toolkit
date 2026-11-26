@@ -1,3 +1,4 @@
+import { UsageHint } from '../../shared/components/UsageHint'
 import { useEffect, useRef, useState, type ChangeEvent, type DragEvent, type FormEvent } from 'react'
 import { Icon } from '../../shared/components/Icon'
 import { PdfProgress } from '../../shared/components/PdfProgress'
@@ -112,8 +113,11 @@ export function JpgToPdfPage() {
     <a className="jpg-back" href="#catalog">← All tools</a>
     <div className="jpg-intro"><span className="eyebrow">CONVERT YOUR FILES</span><h1>JPG to PDF<span className="accent-dot">.</span></h1><p>Turn JPG and PNG images into one PDF in the order you choose.</p></div>
     <form onSubmit={handleSubmit}>
-      <div className="jpg-panel"><div className="jpg-heading"><span className="jpg-step">01</span><div><h2>Choose your images</h2><p>Add up to 20 JPG or PNG images. They become PDF pages from first to last.</p></div></div>
-        <label className="jpg-picker"><input type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" multiple onChange={addImages} disabled={busy} /><span className="jpg-picker__icon"><Icon name="image" /></span><strong>{images.length ? 'Add more images' : 'Choose JPG or PNG images'}</strong><span>Up to 20 files · 25 MB each · 100 MB total</span></label>
+      <div className="usage-layout">
+        <div className="jpg-panel"><div className="jpg-heading"><span className="jpg-step">01</span><div><h2>Choose your images</h2><p>Add up to 20 JPG or PNG images. They become PDF pages from first to last.</p></div></div>
+          <label className="jpg-picker"><input type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" multiple onChange={addImages} disabled={busy} /><span className="jpg-picker__icon"><Icon name="image" /></span><strong>{images.length ? 'Add more images' : 'Choose JPG or PNG images'}</strong><span>Up to 20 files · 25 MB each · 100 MB total</span></label>
+        </div>
+        <UsageHint icon="image" title="One image, one page" steps={[{ title: 'Collect your images', detail: 'Choose JPG or PNG files for the new PDF.' }, { title: 'Set their order', detail: 'Drag or move images; remove any you do not need.' }, { title: 'Choose the page', detail: 'Pick A4, Letter, or fit to image and an orientation.' }]} />
       </div>
 
       <div className="jpg-panel"><div className="jpg-heading"><span className="jpg-step">02</span><div><h2>Review page order</h2><p>Drag images into place, or use the move buttons. Remove anything you do not need.</p></div></div>

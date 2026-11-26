@@ -1,3 +1,4 @@
+import { UsageHint } from '../../shared/components/UsageHint'
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent, type PointerEvent } from 'react'
 import { Icon } from '../../shared/components/Icon'
 import { PdfProgress } from '../../shared/components/PdfProgress'
@@ -163,9 +164,12 @@ export function CropPdfPage() {
     <a className="crop-back" href="#catalog">← All tools</a>
     <div className="crop-intro"><span className="eyebrow">ORGANIZE YOUR DOCUMENTS</span><h1>Crop PDF<span className="accent-dot">.</span></h1><p>Choose the part of a page you want to keep visible across the whole PDF.</p></div>
     <form onSubmit={handleSubmit}>
-      <div className="crop-panel"><div className="crop-section-heading"><span className="crop-step">01</span><div><h2>Choose your PDF</h2><p>Preview a page, then select the area to keep.</p></div></div>
-        <label className="crop-picker"><input type="file" accept=".pdf,application/pdf" onChange={chooseFile} disabled={busy} /><span className="crop-picker__icon"><Icon name="crop" /></span><strong>{file ? 'Choose a different PDF' : 'Choose a PDF file'}</strong><span>PDF only · up to 25 MB</span></label>
-        {file && preview && <p className="crop-file-label"><strong>{file.name}</strong> · {fileSize(file.size)} · {preview.pageCount} {preview.pageCount === 1 ? 'page' : 'pages'}</p>}
+      <div className="usage-layout">
+        <div className="crop-panel"><div className="crop-section-heading"><span className="crop-step">01</span><div><h2>Choose your PDF</h2><p>Preview a page, then select the area to keep.</p></div></div>
+          <label className="crop-picker"><input type="file" accept=".pdf,application/pdf" onChange={chooseFile} disabled={busy} /><span className="crop-picker__icon"><Icon name="crop" /></span><strong>{file ? 'Choose a different PDF' : 'Choose a PDF file'}</strong><span>PDF only · up to 25 MB</span></label>
+          {file && preview && <p className="crop-file-label"><strong>{file.name}</strong> · {fileSize(file.size)} · {preview.pageCount} {preview.pageCount === 1 ? 'page' : 'pages'}</p>}
+        </div>
+        <UsageHint icon="crop" title="Keep the right area" steps={[{ title: 'Pick a sample page', detail: 'Pick a page that shows the area you need.' }, { title: 'Draw the crop', detail: 'Drag a rectangle or refine its percentages.' }, { title: 'Check every page', detail: 'The same relative crop hides outer areas on all pages.' }]} />
       </div>
 
       {file && preview && <div className="crop-panel"><div className="crop-section-heading"><span className="crop-step">02</span><div><h2>Select the visible area</h2><p>Drag across the page, or enter percentages below. The same relative area will be used on every page.</p></div></div>
