@@ -1,0 +1,71 @@
+.site-header{height:auto;min-height:82px}
+.site-header .header-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:82px;height:auto}
+.site-header .header-inner nav{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin:0 0 0 auto;color:#4e5871}
+.site-header .header-inner nav a{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 15px;border-radius:10px;font-size:14px;font-weight:700;white-space:nowrap}
+.site-header .header-inner nav .header-nav-primary{background:#6861e8;color:#fff;box-shadow:0 5px 14px #6861e829}
+.site-header .header-inner nav .header-nav-primary:hover{background:#554ed2;color:#fff}
+.site-header .header-inner nav .header-nav-secondary{color:#59637d}
+.site-header .header-inner nav .header-nav-secondary:hover{background:#f2f0ff;color:#554ed2}
+.site-header .header-inner nav a:focus-visible{outline:3px solid #3933a8;outline-offset:3px}
+.header-menu-button{display:none}
+
+.about-section{padding:64px 0 62px;scroll-margin-top:16px}
+.about-guide__intro{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,440px);align-items:end;gap:42px}
+.about-guide__intro h2{margin:16px 0 0}
+.about-guide__intro>p{margin:0 0 3px;color:#cbd0e0;font-size:16px;line-height:1.65}
+.about-guide__details{display:grid;grid-template-columns:1fr 1fr;gap:38px;margin-top:34px;padding-top:28px;border-top:1px solid #4b5570}
+.about-guide__details>div{min-width:0}
+.about-guide__label{color:#aca6ff;font-size:11px;font-weight:800;letter-spacing:1.7px}
+.about-guide__details h3{font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:18px;letter-spacing:-.4px;margin:10px 0 9px}
+.about-guide__details p{max-width:510px;margin:0;color:#c3cada;font-size:13px;line-height:1.65}
+
+.site-footer{border-top:1px solid #eceef4}
+.site-footer .footer-inner{display:block;min-height:0;padding:42px 0 28px}
+.footer-top{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-bottom:28px;border-bottom:1px solid #e9ebf2}
+.footer-brand{min-width:0}.footer-brand p{margin:12px 0 0;color:#69738c;font-size:13px;line-height:1.6}
+.footer-primary{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.footer-primary a{display:inline-flex;align-items:center;min-height:38px;padding:8px 12px;border:1px solid #e4e5f4;border-radius:9px;color:#5d55d8;background:#f7f6ff;font-size:12px;font-weight:800;white-space:nowrap}
+.footer-primary a:hover{border-color:#bcb6f3;background:#eeecff}
+.footer-tool-groups{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:22px;padding:30px 0 28px}
+.footer-tool-group{min-width:0}
+.site-footer .footer-tool-group h2{margin:0 0 13px;color:#29344f;font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:14px;line-height:1.3}
+.footer-tool-group ul{list-style:none;margin:0;padding:0}
+.footer-tool-group li+li{margin-top:8px}
+.footer-tool-group a{color:#626d86;font-size:12px;line-height:1.4}
+.footer-tool-group a:hover{color:#5d55d8;text-decoration:underline;text-underline-offset:3px}
+.footer-mobile-groups{display:none}
+.site-footer .footer-files{margin:0;padding-top:16px;border-top:1px solid #e9ebf2;color:#8790a2;font-size:11px;line-height:1.55}
+
+@media(max-width:1000px){.footer-tool-groups{grid-template-columns:repeat(3,minmax(0,1fr));gap:24px 30px}}
+@media(max-width:800px){.about-guide__intro{grid-template-columns:1fr;gap:18px}.about-guide__intro>p{max-width:650px}}
+@media(max-width:700px){
+  .site-header{height:auto;position:relative;z-index:20}
+  .site-header .header-inner{flex-wrap:nowrap;gap:12px;padding:11px 0;min-height:0}
+  .header-menu-button{display:grid;place-items:center;flex:none;width:44px;height:44px;border:1px solid #dddff0;border-radius:10px;background:#f7f6ff;color:#554ed2}
+  .header-menu-button:hover{border-color:#ada6ee;background:#eeecff}
+  .header-menu-button:focus-visible{outline:3px solid #3933a8;outline-offset:3px}
+  .header-menu-icon{display:grid;gap:4px;width:19px}
+  .header-menu-icon span{display:block;height:2px;border-radius:2px;background:currentColor}
+  .site-header .header-inner nav{display:none;position:absolute;top:calc(100% - 1px);left:18px;right:18px;width:auto;flex-direction:column;align-items:stretch;gap:4px;margin:0;padding:10px;border:1px solid #e5e5f2;border-radius:0 0 14px 14px;background:#fff;box-shadow:0 14px 25px #283b6829}
+  .site-header .header-inner nav.header-nav-open{display:flex}
+  .site-header .header-inner nav a{justify-content:flex-start;min-height:46px;padding:11px 14px;font-size:14px}
+  .site-header .header-inner nav a:last-child{display:inline-flex}
+  .about-section{padding:50px 0}
+  .about-guide__details{grid-template-columns:1fr;gap:22px;margin-top:24px;padding-top:22px}
+  .site-footer .footer-inner{padding:34px 0 24px}
+  .footer-top{align-items:flex-start;flex-direction:column;gap:18px}
+  .site-footer .footer-tool-groups{display:none}
+  .footer-mobile-groups{display:block;padding:24px 0}
+  .footer-mobile-groups details{border-top:1px solid #e9ebf2}
+  .footer-mobile-groups details:last-child{border-bottom:1px solid #e9ebf2}
+  .footer-mobile-groups summary{display:flex;align-items:center;gap:10px;min-height:52px;padding:11px 2px;list-style:none;cursor:pointer;color:#29344f;font-family:'Plus Jakarta Sans',Arial,sans-serif;font-size:14px;font-weight:700}
+  .footer-mobile-groups summary::-webkit-details-marker{display:none}
+  .footer-mobile-groups summary:focus-visible{outline:3px solid #6861e8;outline-offset:-3px;border-radius:6px}
+  .footer-mobile-groups__count{margin-left:auto;color:#8790a2;font-family:'DM Sans',Arial,sans-serif;font-size:11px;font-weight:600;white-space:nowrap}
+  .footer-mobile-groups__chevron{width:8px;height:8px;margin:0 8px 3px 3px;flex:none;border-right:2px solid #7169e3;border-bottom:2px solid #7169e3;transform:rotate(45deg);transition:transform .2s}
+  .footer-mobile-groups details[open] .footer-mobile-groups__chevron{transform:rotate(225deg);margin-top:6px;margin-bottom:0}
+  .footer-mobile-groups ul{list-style:none;margin:0;padding:0 0 10px}
+  .footer-mobile-groups a{display:flex;align-items:center;min-height:44px;padding:9px 12px;border-radius:8px;color:#626d86;font-size:13px;font-weight:600;line-height:1.4;overflow-wrap:anywhere}
+  .footer-mobile-groups a:hover{background:#f2f0ff;color:#554ed2}
+  .site-footer .footer-inner p{width:auto;order:initial}
+}
