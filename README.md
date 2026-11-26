@@ -1,6 +1,6 @@
 # PageKit
 
-PageKit is a student-focused PDF toolkit. Merge PDF, Split PDF, Organize pages, Rotate PDF, Add page numbers, Crop PDF, Compress PDF, PDF to Word, Protect PDF, Watermark PDF, and JPG to PDF are available; the other catalog tools are planned and unavailable. Flask handles these features and provides a health check.
+PageKit is a student-focused PDF toolkit. Merge PDF, Split PDF, Organize pages, Rotate PDF, Add page numbers, Crop PDF, Compress PDF, PDF to Word, Protect PDF, Unlock PDF, Watermark PDF, and JPG to PDF are available; the other catalog tools are planned and unavailable. Flask handles these features and provides a health check.
 
 ## Requirements
 
@@ -94,7 +94,7 @@ The same relative crop is applied to every page, including pages with different 
 
 Text and vector content stay as PDF content, and page order is preserved. Balanced and Strong recompress eligible RGB or grayscale images only when the new encoded image is smaller. Downsampling depends on each image's largest displayed size. Transparent, masked, unsupported, inline, and images with unknown placement remain unchanged. The backend clones the source document before compression; tests verify bookmarks, URL link annotations, a basic form field, metadata, and page labels. Complex interactive behavior and digital signatures are not guaranteed; rewriting a signed PDF can invalidate its signature. An already optimized PDF may save very little or become larger, which the result panel reports plainly. Processing uses the existing `pypdf` and Pillow libraries locally. Password-protected, unreadable, and oversized PDFs are rejected. The request directory is removed after processing or failure. Progress records are cleared after success, error, or cancellation, or expire after 15 minutes on a later request.
 
-All eleven available PDF tools show real upload progress from bytes sent and processing progress from completed work units. Cancel stops the client request and signals the backend to stop at its next processing boundary. Processing percentages reflect completed units, not elapsed time, and reach 100% only when the output response is ready. Progress records are held in this Flask process, so a multiworker deployment would need worker affinity or a shared progress store.
+All twelve available PDF tools show real upload progress from bytes sent and processing progress from completed work units. Cancel stops the client request and signals the backend to stop at its next processing boundary. Processing percentages reflect completed units, not elapsed time, and reach 100% only when the output response is ready. Progress records are held in this Flask process, so a multiworker deployment would need worker affinity or a shared progress store.
 
 ## Try Protect PDF
 
@@ -103,6 +103,14 @@ All eleven available PDF tools show real upload progress from bytes sent and pro
 3. Choose **Protect PDF**, then download the protected copy. Open it in a PDF reader to confirm it asks for the password.
 
 PageKit uses pypdf's explicit AES-256 encryption locally. Its optional `crypto` extra installs `cryptography`, which is required for AES. The original PDF is unchanged. Already-encrypted, unreadable, and oversized PDFs are rejected with an error. PageKit does not log or save the password; keep it somewhere safe because PageKit cannot recover it. The temporary upload is deleted after processing or failure, and abandoned request folders are cleared at startup or on later requests once 15 minutes old.
+
+## Try Unlock PDF
+
+1. Start both servers and open **Unlock PDF** from the catalog.
+2. Choose one password-protected PDF, up to 25 MB. Enter the password you use to open it.
+3. Choose **Unlock PDF**, then download the unlocked copy. Open the new file to confirm it no longer asks for a password.
+
+Unlock PDF uses the existing `pypdf[crypto]` dependency locally. It does not guess or recover passwords. An incorrect password, an unencrypted PDF, or a file that cannot be decrypted gets a clear error. The original stays encrypted and unchanged. Tests verify that page order, bookmarks, and metadata survive the copy; complex PDF features may vary. PageKit does not log or save the supplied password. The temporary upload is removed after processing or failure, and abandoned request folders are cleared at startup or on later requests once 15 minutes old.
 
 ## Try Watermark PDF
 
