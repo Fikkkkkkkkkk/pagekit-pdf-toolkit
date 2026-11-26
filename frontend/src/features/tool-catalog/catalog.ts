@@ -31,7 +31,7 @@ export const tools: Tool[] = [
   { name: 'PDF to Word', description: 'Create an editable Word document.', category: 'convert', release: true, available: true, icon: 'word' },
   { name: 'PDF to PowerPoint', description: 'Move PDF content into slides.', category: 'convert', icon: 'slides' },
   { name: 'PDF to Excel', description: 'Bring tables into a spreadsheet.', category: 'convert', icon: 'sheet' },
-  { name: 'PDF to JPG & images', description: 'Save pages as JPGs or extract images.', category: 'convert', icon: 'image' },
+  { name: 'PDF to JPG', description: 'Export every page as a JPG in one ZIP.', category: 'convert', release: true, available: true, icon: 'image' },
   { name: 'PDF to PDF/A', description: 'Prepare a file for long-term archiving.', category: 'convert', icon: 'archive' },
   { name: 'PDF to Markdown', description: 'Make PDF content easier to reuse in notes.', category: 'convert', icon: 'markdown' },
   { name: 'Word to PDF', description: 'Make a Word file ready to share.', category: 'convert', icon: 'word' },

@@ -18,6 +18,7 @@ from .features.organize_pages.routes import organize_pages_blueprint
 from .features.organize_pages.storage import cleanup_stale_requests as cleanup_stale_organize_requests
 from .features.pdf_to_word.routes import pdf_to_word_blueprint
 from .features.pdf_to_word.storage import cleanup_stale_requests as cleanup_stale_word_requests
+from .features.pdf_to_jpg.routes import pdf_to_jpg_blueprint
 from .features.protect_pdf.routes import protect_pdf_blueprint
 from .features.protect_pdf.storage import cleanup_stale_requests as cleanup_stale_protect_requests
 from .features.rotate_pdf.routes import rotate_pdf_blueprint
@@ -52,6 +53,7 @@ def create_app() -> Flask:
     app.register_blueprint(merge_pdf_blueprint)
     app.register_blueprint(organize_pages_blueprint)
     app.register_blueprint(pdf_to_word_blueprint)
+    app.register_blueprint(pdf_to_jpg_blueprint)
     app.register_blueprint(protect_pdf_blueprint)
     app.register_blueprint(rotate_pdf_blueprint)
     app.register_blueprint(split_pdf_blueprint)
@@ -96,6 +98,8 @@ def create_app() -> Flask:
             return jsonify(error="The PDF is too large. Choose a file up to 25 MB."), 413
         if request.path == "/api/pdf-to-word":
             return jsonify(error="The PDF is too large. Choose a file up to 25 MB."), 413
+        if request.path == "/api/pdf-to-jpg":
+            return jsonify(error="The converted images exceed the 100 MB upload limit. Try a lower JPG quality."), 413
         if request.path == "/api/protect-pdf":
             return jsonify(error="The PDF is too large. Choose a file up to 25 MB."), 413
         if request.path == "/api/unlock-pdf":
